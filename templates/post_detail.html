@@ -1,0 +1,379 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - Ulusal Tevkil Ağı Projesi{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-5xl flex-1">
+        <!-- Back Button -->
+        <div class="p-4">
+            <a href="{{ url_for('list_posts') }}" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span class="text-sm font-medium">Tüm İlanlara Dön</span>
+            </a>
+        </div>
+        
+        <!-- Post Header -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-4 mb-6">
+                <div class="flex-1">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                        {% if post.urgency_level == 'urgent' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 uppercase tracking-wider">⚡ ACİL</span>
+                        {% elif post.urgency_level == 'very_urgent' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-red-600 text-white uppercase tracking-wider animate-pulse">🚨 ÇOK ACİL</span>
+                        {% endif %}
+                        
+                        {% if post.status == 'active' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">AKTİF</span>
+                        {% elif post.status == 'assigned' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">ATANDI</span>
+                        {% elif post.status == 'completed' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">TAMAMLANDI</span>
+                        {% endif %}
+                        </div>
+                        
+                        {% if current_user.is_authenticated and current_user.id != post.user_id %}
+                        <button onclick="toggleFavorite({{ post.id }}, this)" class="favorite-btn text-3xl transition-colors" data-favorited="{{ 'true' if is_favorited else 'false' }}">
+                            <span class="material-symbols-outlined {% if is_favorited %}text-red-500 fill-icon{% else %}text-gray-400{% endif %}">favorite</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                    
+                    <h1 class="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4">{{ post.title }}</h1>
+                    
+                    <div class="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">calendar_today</span>
+                            {{ post.created_at.strftime('%d %B %Y') }}
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">visibility</span>
+                            {{ post.views }} görüntülenme
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-lg">person</span>
+                            {{ post.applications_count }} başvuru
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Price Badge -->
+                {% if post.price_min or post.price_max %}
+                <div class="bg-primary/10 rounded-xl p-6 text-center min-w-[200px]">
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Teklif Edilen Ücret</p>
+                    <p class="text-3xl font-black text-primary">
+                        {% if post.price_min and post.price_max %}
+                            {{ post.price_min }} - {{ post.price_max }} ₺
+                        {% elif post.price_max %}
+                            {{ post.price_max }} ₺
+                        {% else %}
+                            {{ post.price_min }} ₺
+                        {% endif %}
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Edit/Delete Buttons (only for owner) -->
+            {% if current_user.is_authenticated and current_user.id == post.user_id %}
+            <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <a href="{{ url_for('edit_post', post_id=post.id) }}" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
+                    <span class="material-symbols-outlined text-lg">edit</span>
+                    <span class="font-medium">İlanı Düzenle</span>
+                </a>
+                <button onclick="confirmDelete()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                    <span class="material-symbols-outlined text-lg">delete</span>
+                    <span class="font-medium">İlanı Sil</span>
+                </button>
+            </div>
+            
+            <form id="deleteForm" method="POST" action="{{ url_for('delete_post', post_id=post.id) }}" style="display: none;"></form>
+            
+            <script>
+            function confirmDelete() {
+                if (confirm('Bu ilanı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+                    document.getElementById('deleteForm').submit();
+                }
+            }
+            </script>
+            {% endif %}
+            
+            <!-- Post Details Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-2xl">work</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Görev Türü</p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white">{{ post.category|title }}</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">location_on</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Konum</p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white">{{ post.location }}</p>
+                    </div>
+                </div>
+                
+                {% if post.expires_at %}
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-2xl">schedule</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Son Başvuru Tarihi</p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white">{{ post.expires_at.strftime('%d %B %Y, %H:%M') }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                
+                {% if post.remote_allowed %}
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">laptop</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Çalışma Şekli</p>
+                        <p class="text-base font-semibold text-gray-900 dark:text-white">Uzaktan Çalışmaya Uygun</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Description -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">description</span>
+                Görev Detayları
+            </h2>
+            <div class="prose dark:prose-invert max-w-none">
+                <p class="text-gray-700 dark:text-gray-300 whitespace-pre-line">{{ post.description }}</p>
+            </div>
+        </div>
+        
+        <!-- Owner Info -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">person</span>
+                İlan Sahibi
+            </h2>
+            <div class="flex items-center gap-4">
+                <img src="https://ui-avatars.com/api/?name={{ post.user.full_name }}&background=1661da&color=fff&size=80" 
+                     alt="{{ post.user.full_name }}" 
+                     class="w-20 h-20 rounded-full">
+                <div class="flex-1">
+                    <a href="{{ url_for('user_profile', user_id=post.user.id) }}" class="text-xl font-bold text-gray-900 dark:text-white hover:text-primary">
+                        {{ post.user.full_name }}
+                    </a>
+                    <div class="flex flex-wrap gap-3 mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">location_on</span>
+                            {{ post.user.city }}
+                        </span>
+                        {% if post.user.rating_average %}
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base text-yellow-500">star</span>
+                            {{ "%.1f"|format(post.user.rating_average) }} ({{ post.user.rating_count }} değerlendirme)
+                        </span>
+                        {% endif %}
+                        <span class="flex items-center gap-1">
+                            <span class="material-symbols-outlined text-base">check_circle</span>
+                            {{ post.user.completed_jobs }} tamamlanan iş
+                        </span>
+                    </div>
+                    
+                    {% if current_user.is_authenticated and current_user.id != post.user_id %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('send_message', receiver_id=post.user.id, post_id=post.id) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors text-sm font-medium">
+                            <span class="material-symbols-outlined text-lg">chat</span>
+                            Mesaj Gönder
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Application Form or Applications List -->
+        {% if current_user.is_authenticated and current_user.id != post.user_id and post.status == 'active' %}
+            {% if current_user.can_apply_to_jobs %}
+            <!-- Application Form -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">send</span>
+                    Bu İlana Başvur
+                </h2>
+                
+                <form method="POST" action="{{ url_for('apply_to_post', post_id=post.id) }}" class="space-y-6">
+                    <div>
+                        <label class="flex flex-col w-full">
+                            <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Mesajınız</p>
+                            <textarea name="message" required rows="5" class="form-textarea flex w-full min-w-0 flex-1 resize-y overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white min-h-[120px] placeholder:text-gray-400 p-4 text-base font-normal" placeholder="Kendinizi tanıtın, deneyimlerinizden bahsedin..."></textarea>
+                        </label>
+                    </div>
+                    
+                    <div>
+                        <label class="flex flex-col w-full">
+                            <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Teklif Fiyatınız (TL)</p>
+                            <div class="relative flex w-full items-center">
+                                <input name="proposed_price" type="number" min="0" step="50" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 pr-10 text-base font-normal" placeholder="Teklif fiyatınız"/>
+                                <span class="absolute right-4 text-gray-500">₺</span>
+                            </div>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-primary text-white font-bold py-4 px-4 rounded-lg text-base h-14 flex items-center justify-center hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined mr-2">send</span>
+                        Başvurumu Gönder
+                    </button>
+                </form>
+            </div>
+            {% else %}
+            <!-- Stajyer Avukat Uyarısı -->
+            <div class="bg-amber-50 dark:bg-amber-900/20 rounded-xl p-8 border border-amber-200 dark:border-amber-800 mb-6">
+                <div class="flex items-start gap-4">
+                    <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-4xl">info</span>
+                    <div>
+                        <h3 class="text-xl font-bold text-amber-900 dark:text-amber-100 mb-2">Başvuru Yapılamaz</h3>
+                        <p class="text-amber-800 dark:text-amber-200">Stajyer avukatlar görevlere başvuru yapamazlar. Ancak kendi görevlerinizi paylaşabilirsiniz.</p>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        
+        {% elif current_user.is_authenticated and current_user.id == post.user_id and applications %}
+        <!-- Applications List (for post owner) -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">inbox</span>
+                Gelen Başvurular ({{ applications|length }})
+            </h2>
+            
+            <div class="space-y-4">
+                {% for app in applications %}
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 {% if app.status == 'accepted' %}bg-green-50 dark:bg-green-900/10{% elif app.status == 'rejected' %}bg-red-50 dark:bg-red-900/10{% endif %}">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex items-start gap-4 flex-1">
+                            <img src="https://ui-avatars.com/api/?name={{ app.applicant.full_name }}&background=1661da&color=fff&size=60" 
+                                 alt="{{ app.applicant.full_name }}" 
+                                 class="w-15 h-15 rounded-full">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <a href="{{ url_for('user_profile', user_id=app.applicant.id) }}" class="text-lg font-bold text-gray-900 dark:text-white hover:text-primary">
+                                        {{ app.applicant.full_name }}
+                                    </a>
+                                    {% if app.status == 'pending' %}
+                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-600">BEKLİYOR</span>
+                                    {% elif app.status == 'accepted' %}
+                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-600">KABUL EDİLDİ</span>
+                                    {% elif app.status == 'rejected' %}
+                                    <span class="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600">REDDEDİLDİ</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="flex flex-wrap gap-3 text-sm text-gray-600 dark:text-gray-400 mb-3">
+                                    <span>{{ app.applicant.city }}</span>
+                                    {% if app.applicant.rating_average %}
+                                    <span class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-xs text-yellow-500">star</span>
+                                        {{ "%.1f"|format(app.applicant.rating_average) }}
+                                    </span>
+                                    {% endif %}
+                                    <span>{{ app.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+                                </div>
+                                
+                                {% if app.message %}
+                                <p class="text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 p-3 rounded-lg mb-3">{{ app.message }}</p>
+                                {% endif %}
+                                
+                                {% if app.proposed_price %}
+                                <p class="text-xl font-bold text-primary">Teklif: {{ app.proposed_price }} ₺</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        {% if app.status == 'pending' %}
+                        <div class="flex gap-2">
+                            <form method="POST" action="{{ url_for('accept_application', app_id=app.id) }}" class="inline">
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">check</span>
+                                    Kabul Et
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('reject_application', app_id=app.id) }}" class="inline">
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-sm">close</span>
+                                    Reddet
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% elif not current_user.is_authenticated %}
+        <!-- Login Prompt -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-8 border-2 border-blue-200 dark:border-blue-800 text-center">
+            <span class="material-symbols-outlined text-primary text-6xl mb-4">lock</span>
+            <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-3">Başvuru Yapmak İçin Giriş Yapın</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Bu ilana başvuru yapabilmek için hesabınıza giriş yapmanız gerekmektedir.</p>
+            <div class="flex gap-4 justify-center">
+                <a href="{{ url_for('login') }}" class="px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90">
+                    Giriş Yap
+                </a>
+                <a href="{{ url_for('register') }}" class="px-6 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/10">
+                    Kayıt Ol
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .fill-icon {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+
+<script>
+    function toggleFavorite(postId, button) {
+        fetch(`/favorites/toggle/${postId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const icon = button.querySelector('.material-symbols-outlined');
+                if (data.action === 'added') {
+                    icon.classList.add('text-red-500', 'fill-icon');
+                    icon.classList.remove('text-gray-400');
+                    button.dataset.favorited = 'true';
+                } else {
+                    icon.classList.remove('text-red-500', 'fill-icon');
+                    icon.classList.add('text-gray-400');
+                    button.dataset.favorited = 'false';
+                }
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+{% endblock %}
+
+

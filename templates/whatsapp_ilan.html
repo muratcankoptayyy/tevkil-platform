@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block title %}WhatsApp ile İlan - Ulusal Tevkil Ağı Projesi{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-3xl flex-1">
+        <!-- Header -->
+        <div class="p-4">
+            <a href="{{ url_for('dashboard') }}" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
+                <span class="material-symbols-outlined">arrow_back</span>
+                <span class="text-sm font-medium">Dashboard'a Dön</span>
+            </a>
+        </div>
+        
+        <div class="flex flex-wrap justify-between gap-3 p-4">
+            <div class="flex min-w-72 flex-col gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+                        <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">WhatsApp ile İlan Oluştur</p>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 text-base font-normal leading-normal">
+                    Telefonunuzdan WhatsApp'ı açın, bot numaramıza mesaj gönderin ve anında ilan oluşturun! Başvurular da doğrudan WhatsApp'a gelir. Web sitesine girmeden tüm iş akışınızı yönetin.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Nasıl Çalışır? -->
+        <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mx-4 mb-6">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">lightbulb</span>
+                Nasıl Çalışır?
+            </h3>
+            <ol class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">1</span>
+                    <span><strong>Profilinize WhatsApp numaranızı kaydedin</strong> - Bot sizi tanıyabilsin</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">2</span>
+                    <span><strong>Bot numarasına mesaj gönderin</strong> - Belirlenen formatta ilan bilgilerini yazın</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">3</span>
+                    <span><strong>İlan otomatik oluşturulur</strong> - İlanınız anında sitemizde yayınlanır</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">4</span>
+                    <span><strong>Onay mesajı alırsınız</strong> - İlan linki WhatsApp'a gönderilir</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">5</span>
+                    <span><strong>Başvurular WhatsApp'a gelir</strong> - Her yeni başvuru için bildirim alırsınız</span>
+                </li>
+                <li class="flex gap-3">
+                    <span class="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-white flex items-center justify-center text-xs font-bold">6</span>
+                    <span><strong>Kabul/Red bildirimleri</strong> - Başvuruları kabul/reddettiğinizde ilgili avukata WhatsApp'tan bildirim gider</span>
+                </li>
+            </ol>
+        </div>
+        
+        <!-- Avantajlar -->
+        <div class="grid md:grid-cols-3 gap-4 px-4 mb-6">
+            <div class="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-5 border border-green-200 dark:border-green-800">
+                <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-white text-2xl">speed</span>
+                </div>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Hızlı İlan Oluşturma</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Web sitesine girmeden doğrudan WhatsApp'tan 30 saniyede ilan yayınlayın</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-5 border border-blue-200 dark:border-blue-800">
+                <div class="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-white text-2xl">notifications_active</span>
+                </div>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Anlık Bildirimler</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Her yeni başvuru için WhatsApp'tan anında bildirim alın</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-5 border border-purple-200 dark:border-purple-800">
+                <div class="w-12 h-12 rounded-full bg-purple-500 flex items-center justify-center mb-3">
+                    <span class="material-symbols-outlined text-white text-2xl">phone_android</span>
+                </div>
+                <h4 class="font-bold text-gray-900 dark:text-white mb-2">Mobil Öncelikli</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-400">Telefonunuzdan, istediğiniz yerden, istediğiniz zaman ilan yönetin</p>
+            </div>
+        </div>
+        
+        <!-- Bot Numarası -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mx-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">📱 WhatsApp Bot Numarası</h3>
+            
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                <div class="flex items-start gap-3">
+                    <span class="text-2xl">ℹ️</span>
+                    <div class="text-sm text-blue-900 dark:text-blue-100">
+                        <p class="font-semibold mb-1">Meta WhatsApp Cloud API</p>
+                        <p class="text-blue-700 dark:text-blue-300">
+                            Sistem Meta'nın resmi WhatsApp Business API'sini kullanır. 
+                            Bot numaran admin panelinden ayarlanacak. Kurulum rehberi için 
+                            <strong>META_SETUP_GUIDE.md</strong> dosyasını incele.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-white">phone</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Bot Numarası</p>
+                        <p class="text-xl font-bold text-gray-900 dark:text-white">
+                            {% if config.get('META_PHONE_NUMBER_ID') %}
+                            Kurulum Tamamlandı ✅
+                            {% else %}
+                            Kurulum Bekleniyor ⏳
+                            {% endif %}
+                        </p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            META_SETUP_GUIDE.md dosyasını takip edin
+                        </p>
+                    </div>
+                </div>
+                <a href="/META_SETUP_GUIDE.md" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors">
+                    <span class="material-symbols-outlined">description</span>
+                    Kurulum Rehberi
+                </a>
+            </div>
+        </div>
+        
+        <!-- Mesaj Formatı -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mx-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">📝 Mesaj Formatı</h3>
+            <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-4">
+                <pre class="text-sm text-gray-800 dark:text-gray-200 font-mono overflow-x-auto whitespace-pre-wrap">#ILAN
+Başlık: [İlan başlığı]
+Kategori: [Boşanma/Ceza/Ticaret/vb]
+Şehir: [Şehir adı]
+Açıklama: [Detaylı açıklama]
+Fiyat: [Ücret tutarı]
+Aciliyet: [Normal/Acil/Çok Acil]</pre>
+            </div>
+            <button onclick="copyFormat()" class="flex items-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg font-semibold transition-colors">
+                <span class="material-symbols-outlined">content_copy</span>
+                Formatı Kopyala
+            </button>
+        </div>
+        
+        <!-- Örnek Kullanım -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-6 mx-4 mb-6 border border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">💡 Örnek Kullanım</h3>
+            <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border-l-4 border-green-500">
+                <pre class="text-sm text-gray-800 dark:text-gray-200 font-mono overflow-x-auto whitespace-pre-wrap">#ILAN
+Başlık: İstanbul Anadolu Adliyesi Duruşma Temsili
+Kategori: Ceza Hukuku
+Şehir: İstanbul
+Açıklama: 15 Ocak tarihinde saat 10:00'da duruşma temsili gerekiyor. CMK kapsamında dosya.
+Fiyat: 2500
+Aciliyet: Acil</pre>
+            </div>
+        </div>
+        
+        <!-- Yardım Komutları -->
+        <div class="bg-yellow-50 dark:bg-yellow-900/20 rounded-xl p-6 mx-4 mb-6 border border-yellow-200 dark:border-yellow-800">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4">⚡ Hızlı Komutlar</h3>
+            <div class="space-y-2 text-sm">
+                <div class="flex items-center gap-3">
+                    <code class="px-3 py-1 bg-yellow-200 dark:bg-yellow-900 rounded font-mono">#FORMAT</code>
+                    <span class="text-gray-700 dark:text-gray-300">- İlan formatını bot'tan al</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <code class="px-3 py-1 bg-yellow-200 dark:bg-yellow-900 rounded font-mono">#YARDIM</code>
+                    <span class="text-gray-700 dark:text-gray-300">- Yardım mesajını al</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WhatsApp Number Check -->
+        <div class="bg-red-50 dark:bg-red-900/20 rounded-xl p-6 mx-4 mb-6 border border-red-200 dark:border-red-800">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400">warning</span>
+                Önemli Bilgi
+            </h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                WhatsApp bot'u kullanabilmek için profilinizde WhatsApp numaranızın kayıtlı olması gerekir.
+            </p>
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">Kayıtlı Numara:</span>
+                {% if current_user.whatsapp_number %}
+                <span class="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded font-mono">{{ current_user.whatsapp_number }}</span>
+                {% else %}
+                <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded">Kayıtlı değil</span>
+                {% endif %}
+            </div>
+            {% if not current_user.whatsapp_number %}
+            <a href="{{ url_for('user_profile', user_id=current_user.id) }}" class="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined">edit</span>
+                Profilimi Düzenle
+            </a>
+            {% endif %}
+        </div>
+        
+        <!-- WhatsApp Bildirimleri -->
+        <div class="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 mx-4 mb-6 border border-green-200 dark:border-green-800">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">mark_chat_read</span>
+                WhatsApp Bildirimleri
+            </h3>
+            <div class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                <div class="flex items-start gap-3 bg-white dark:bg-gray-800 rounded-lg p-3">
+                    <span class="text-2xl">🔔</span>
+                    <div>
+                        <p class="font-semibold mb-1">Yeni Başvuru Geldiğinde</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">İlanınıza başvuru geldiğinde detaylar WhatsApp'a gönderilir (başvuran adı, teklif edilen ücret, mesaj)</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-3 bg-white dark:bg-gray-800 rounded-lg p-3">
+                    <span class="text-2xl">✅</span>
+                    <div>
+                        <p class="font-semibold mb-1">Başvuru Kabul/Red</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">Başvuruyu kabul veya reddedince ilgili avukata otomatik WhatsApp mesajı gider</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-start gap-3 bg-white dark:bg-gray-800 rounded-lg p-3">
+                    <span class="text-2xl">📋</span>
+                    <div>
+                        <p class="font-semibold mb-1">İlan Oluşturulduğunda</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400">WhatsApp'tan ilan oluşturduğunuzda onay mesajı ve ilan linki gelir</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Test Alanı (Sadece WhatsApp numarası kayıtlı ise) -->
+        {% if current_user.whatsapp_number %}
+        <div class="bg-purple-50 dark:bg-purple-900/20 rounded-xl p-6 mx-4 mb-6 border border-purple-200 dark:border-purple-800">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-purple-600 dark:text-purple-400">science</span>
+                Bot'u Test Et
+            </h3>
+            <p class="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                WhatsApp bot'unuzu buradan test edebilirsiniz. Mesajınızı yazın ve nasıl işleneceğini görün.
+            </p>
+            
+            <form id="testForm" onsubmit="testBot(event)" class="space-y-4">
+                <div>
+                    <label class="text-sm font-semibold text-gray-900 dark:text-white mb-2 block">Test Mesajı</label>
+                    <textarea 
+                        id="testMessage" 
+                        name="message"
+                        rows="6"
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white p-3 text-sm font-mono focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        placeholder="#ILAN
+Başlık: Test İlan
+Kategori: Ceza Hukuku
+Şehir: İstanbul
+Açıklama: Test amaçlı ilan
+Fiyat: 1000
+Aciliyet: Normal"
+                    ></textarea>
+                </div>
+                
+                <button type="submit" class="w-full flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-semibold transition-colors">
+                    <span class="material-symbols-outlined">send</span>
+                    Test Et
+                </button>
+            </form>
+            
+            <div id="testResult" class="hidden mt-4 p-4 rounded-lg"></div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function copyFormat() {
+        const format = `#ILAN
+Başlık: [İlan başlığı]
+Kategori: [Boşanma/Ceza/Ticaret/vb]
+Şehir: [Şehir adı]
+Açıklama: [Detaylı açıklama]
+Fiyat: [Ücret tutarı]
+Aciliyet: [Normal/Acil/Çok Acil]`;
+        
+        navigator.clipboard.writeText(format).then(() => {
+            alert('Format kopyalandı! WhatsApp\'a yapıştırabilirsiniz.');
+        });
+    }
+    
+    async function testBot(event) {
+        event.preventDefault();
+        
+        const form = event.target;
+        const message = form.message.value;
+        const resultDiv = document.getElementById('testResult');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        
+        // Disable button
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined animate-spin">progress_activity</span> İşleniyor...';
+        
+        try {
+            const formData = new FormData();
+            formData.append('message', message);
+            
+            const response = await fetch('/api/whatsapp/test', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                resultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700';
+                resultDiv.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                        <div class="flex-1">
+                            <p class="font-semibold text-green-900 dark:text-green-100 mb-2">Başarılı!</p>
+                            <p class="text-sm text-green-800 dark:text-green-200 whitespace-pre-wrap">${data.response}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700';
+                resultDiv.innerHTML = `
+                    <div class="flex items-start gap-3">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+                        <div class="flex-1">
+                            <p class="font-semibold text-red-900 dark:text-red-100 mb-2">Hata!</p>
+                            <p class="text-sm text-red-800 dark:text-red-200">${data.error || 'Bir hata oluştu'}</p>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            
+        } catch (error) {
+            resultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-700';
+            resultDiv.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+                    <div class="flex-1">
+                        <p class="font-semibold text-red-900 dark:text-red-100 mb-2">Bağlantı Hatası</p>
+                        <p class="text-sm text-red-800 dark:text-red-200">Sunucuya bağlanılamadı</p>
+                    </div>
+                </div>
+            `;
+            resultDiv.classList.remove('hidden');
+        } finally {
+            // Re-enable button
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined">send</span> Test Et';
+        }
+    }
+</script>
+
+<script>
+    function copyFormat() {
+        const format = `#ILAN
+Başlık: [İlan başlığı]
+Kategori: [Boşanma/Ceza/Ticaret/vb]
+Şehir: [Şehir adı]
+Açıklama: [Detaylı açıklama]
+Fiyat: [Ücret tutarı]
+Aciliyet: [Normal/Acil/Çok Acil]`;
+        
+        navigator.clipboard.writeText(format).then(() => {
+            alert('Format kopyalandı! WhatsApp\'a yapıştırabilirsiniz.');
+        });
+    }
+</script>
+{% endblock %}
+
+

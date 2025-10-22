@@ -1,0 +1,441 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Ulusal Tevkil Ağı Projesi{% endblock %}
+
+{% block content %}
+<div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-7xl flex-1">
+        <!-- Welcome Header -->
+        <div class="flex flex-wrap justify-between items-center gap-4 p-4">
+            <div>
+                <p class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                    Hoş Geldiniz, {{ current_user.full_name.split()[0] }}!
+                </p>
+                <p class="text-gray-600 dark:text-gray-400 text-base mt-2">
+                    İşte hesabınızın genel durumu
+                </p>
+            </div>
+            <a href="{{ url_for('create_post') }}" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined mr-2">add</span>
+                Yeni İlan
+            </a>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 py-3">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Aktif İlanlarım</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+                            {{ my_posts|selectattr('status', 'equalto', 'active')|list|length }}
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-2xl">list_alt</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Gelen Başvurular</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+                            {{ incoming_applications|length }}
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">inbox</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Başvurularım</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+                            {{ my_applications|length }}
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">send</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Tamamlanan</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+                            {{ my_posts|selectattr('status', 'equalto', 'completed')|list|length }}
+                        </p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-2xl">check_circle</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-3">
+            <!-- Applications Trend Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">trending_up</span>
+                    Başvuru Trendi (Son 6 Ay)
+                </h3>
+                <canvas id="applicationsChart"></canvas>
+            </div>
+            
+            <!-- Category Distribution Chart -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">pie_chart</span>
+                    İlan Kategorileri
+                </h3>
+                <canvas id="categoriesChart"></canvas>
+            </div>
+        </div>
+        
+        <!-- Performance Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-3">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-4xl opacity-80">emoji_events</span>
+                    <span class="text-sm opacity-80">Bu Ay</span>
+                </div>
+                <p class="text-3xl font-black">{{ monthly_completed }}</p>
+                <p class="text-sm opacity-90 mt-1">Tamamlanan İş</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-4xl opacity-80">currency_lira</span>
+                    <span class="text-sm opacity-80">Toplam</span>
+                </div>
+                <p class="text-3xl font-black">{{ total_earnings|default(0)|int }} TL</p>
+                <p class="text-sm opacity-90 mt-1">Tahmini Kazanç</p>
+            </div>
+            
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="material-symbols-outlined text-4xl opacity-80">star</span>
+                    <span class="text-sm opacity-80">Ortalama</span>
+                </div>
+                <p class="text-3xl font-black">{{ avg_rating|default(0)|round(1) }}</p>
+                <p class="text-sm opacity-90 mt-1">Değerlendirme</p>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="px-4 py-3">
+            <div class="flex border-b border-gray-200 dark:border-gray-700">
+                <button onclick="showTab('my-posts')" id="tab-my-posts" class="tab-button border-b-2 border-primary text-primary px-4 py-3 font-semibold">
+                    Benim İlanlarım
+                </button>
+                <button onclick="showTab('incoming')" id="tab-incoming" class="tab-button border-b-2 border-transparent text-gray-600 dark:text-gray-400 px-4 py-3 font-semibold hover:text-primary">
+                    Gelen Başvurular
+                </button>
+                <button onclick="showTab('my-applications')" id="tab-my-applications" class="tab-button border-b-2 border-transparent text-gray-600 dark:text-gray-400 px-4 py-3 font-semibold hover:text-primary">
+                    Başvurularım
+                </button>
+            </div>
+        </div>
+        
+        <!-- My Posts Tab -->
+        <div id="content-my-posts" class="tab-content px-4 py-3">
+            {% if my_posts %}
+            <div class="space-y-4">
+                {% for post in my_posts %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ post.title }}</h3>
+                                {% if post.urgency_level == 'urgent' %}
+                                <span class="px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">ACİL</span>
+                                {% endif %}
+                                {% if post.status == 'active' %}
+                                <span class="px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">AKTİF</span>
+                                {% elif post.status == 'assigned' %}
+                                <span class="px-2 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">ATANDI</span>
+                                {% elif post.status == 'completed' %}
+                                <span class="px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">TAMAMLANDI</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-600 dark:text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-base">location_on</span>
+                                    {{ post.location }}
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-base">work</span>
+                                    {{ post.category }}
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-base">visibility</span>
+                                    {{ post.views }} görüntüleme
+                                </span>
+                                <span class="flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-base">person</span>
+                                    {{ post.applications_count }} başvuru
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2">
+                            <a href="{{ url_for('post_detail', post_id=post.id) }}" class="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                                <span class="material-symbols-outlined">visibility</span>
+                            </a>
+                            <a href="{{ url_for('edit_post', post_id=post.id) }}" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                                <span class="material-symbols-outlined">edit</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <span class="material-symbols-outlined text-gray-400 text-6xl mb-4">post_add</span>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Henüz İlan Oluşturmadınız</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">İlk ilanınızı oluşturun ve başvuruları almaya başlayın</p>
+                <a href="{{ url_for('create_post') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90">
+                    <span class="material-symbols-outlined mr-2">add</span>
+                    İlan Oluştur
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Incoming Applications Tab -->
+        <div id="content-incoming" class="tab-content hidden px-4 py-3">
+            {% if incoming_applications %}
+            <div class="space-y-4">
+                {% for app in incoming_applications %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900 dark:text-white">{{ app.post.title }}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ app.applicant.full_name }} - {{ app.applicant.city }}</p>
+                            {% if app.message %}
+                            <p class="text-sm text-gray-700 dark:text-gray-300 mt-3 p-3 bg-gray-50 dark:bg-gray-900 rounded">{{ app.message }}</p>
+                            {% endif %}
+                            {% if app.proposed_price %}
+                            <p class="text-primary font-bold mt-2">Teklif: {{ app.proposed_price }} TL</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-2">{{ app.created_at.strftime('%d %b %Y, %H:%M') }}</p>
+                        </div>
+                        
+                        {% if app.status == 'pending' %}
+                        <div class="flex gap-2 ml-4">
+                            <form method="POST" action="{{ url_for('accept_application', app_id=app.id) }}" class="inline">
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors">
+                                    Kabul Et
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('reject_application', app_id=app.id) }}" class="inline">
+                                <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors">
+                                    Reddet
+                                </button>
+                            </form>
+                        </div>
+                        {% elif app.status == 'accepted' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-600">KABUL EDİLDİ</span>
+                        {% else %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600">REDDEDİLDİ</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <span class="material-symbols-outlined text-gray-400 text-6xl mb-4">inbox</span>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Henüz Başvuru Yok</h3>
+                <p class="text-gray-600 dark:text-gray-400">İlanlarınıza başvurular gelmeye başladığında burada görünecek</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- My Applications Tab -->
+        <div id="content-my-applications" class="tab-content hidden px-4 py-3">
+            {% if my_applications %}
+            <div class="space-y-4">
+                {% for app in my_applications %}
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <h4 class="font-bold text-gray-900 dark:text-white">{{ app.post.title }}</h4>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">{{ app.post.location }} - {{ app.post.user.full_name }}</p>
+                            {% if app.message %}
+                            <p class="text-sm text-gray-700 dark:text-gray-300 mt-3 p-3 bg-gray-50 dark:bg-gray-900 rounded">{{ app.message }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-2">{{ app.created_at.strftime('%d %b %Y, %H:%M') }}</p>
+                        </div>
+                        
+                        {% if app.status == 'pending' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-600">BEKLİYOR</span>
+                        {% elif app.status == 'accepted' %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-green-100 text-green-600">KABUL EDİLDİ</span>
+                        {% else %}
+                        <span class="px-3 py-1 text-xs font-bold rounded-full bg-red-100 text-red-600">REDDEDİLDİ</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <span class="material-symbols-outlined text-gray-400 text-6xl mb-4">send</span>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Henüz Başvuru Yapmadınız</h3>
+                <p class="text-gray-600 dark:text-gray-400 mb-4">İlanlara göz atın ve ilginizi çeken işlere başvurun</p>
+                <a href="{{ url_for('list_posts') }}" class="inline-flex items-center justify-center px-6 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-primary/90">
+                    İlanları İncele
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    // Remove active state from all tabs
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('border-primary', 'text-primary');
+        button.classList.add('border-transparent', 'text-gray-600', 'dark:text-gray-400');
+    });
+    
+    // Show selected tab content
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    
+    // Add active state to selected tab
+    const activeTab = document.getElementById('tab-' + tabName);
+    activeTab.classList.remove('border-transparent', 'text-gray-600', 'dark:text-gray-400');
+    activeTab.classList.add('border-primary', 'text-primary');
+}
+</script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+    // Dark mode detection
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const textColor = isDarkMode ? '#e5e7eb' : '#374151';
+    const gridColor = isDarkMode ? '#374151' : '#e5e7eb';
+    
+    // Applications Trend Chart
+    const applicationsCtx = document.getElementById('applicationsChart').getContext('2d');
+    new Chart(applicationsCtx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_months|tojson }},
+            datasets: [{
+                label: 'Gelen Başvurular',
+                data: {{ chart_incoming|tojson }},
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4,
+                fill: true
+            }, {
+                label: 'Yaptığım Başvurular',
+                data: {{ chart_outgoing|tojson }},
+                borderColor: 'rgb(168, 85, 247)',
+                backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: textColor,
+                        font: {
+                            family: 'Manrope',
+                            size: 12
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: textColor,
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: textColor
+                    },
+                    grid: {
+                        color: gridColor
+                    }
+                }
+            }
+        }
+    });
+    
+    // Categories Distribution Chart
+    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
+    new Chart(categoriesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|tojson }},
+            datasets: [{
+                data: {{ category_counts|tojson }},
+                backgroundColor: [
+                    'rgb(59, 130, 246)',
+                    'rgb(168, 85, 247)',
+                    'rgb(34, 197, 94)',
+                    'rgb(251, 146, 60)',
+                    'rgb(239, 68, 68)',
+                    'rgb(236, 72, 153)',
+                    'rgb(14, 165, 233)'
+                ],
+                borderWidth: 2,
+                borderColor: isDarkMode ? '#1f2937' : '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        color: textColor,
+                        font: {
+                            family: 'Manrope',
+                            size: 11
+                        },
+                        padding: 15
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+
