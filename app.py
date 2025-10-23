@@ -36,7 +36,7 @@ app.config['DEV_MODE'] = os.getenv('FLASK_ENV', 'production') == 'development'
 # Initialize extensions
 db.init_app(app)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
 
 # Initialize CSRF Protection
 csrf = CSRFProtect(app)
