@@ -36,11 +36,11 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto py-8 px-4">
+<div class="container mx-auto py-4 md:py-8 px-4">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-6 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-text dark:text-white">İlanlar</h1>
+            <h1 class="text-xl md:text-3xl font-bold text-text dark:text-white">İlanlar</h1>
             <a href="{{ url_for('create_post') }}" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2">
                 <span class="material-symbols-outlined">add</span>
                 Yeni İlan
@@ -215,7 +215,7 @@
                                         </a>
                                         {% if current_user.is_authenticated %}
                                         <button onclick="toggleFavorite({{ post.id }}, this)" 
-                                                class="favorite-btn text-2xl transition-colors p-2" 
+                                                class="favorite-btn text-lg md:text-2xl transition-colors p-2 w-full sm:w-auto" 
                                                 data-favorited="{{ 'true' if post.id in current_user_favorites else 'false' }}">
                                             <span class="material-symbols-outlined {% if post.id in current_user_favorites %}text-red-500 fill-icon{% else %}text-gray-400{% endif %}">favorite</span>
                                         </button>

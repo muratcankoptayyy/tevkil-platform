@@ -8,7 +8,7 @@
         <!-- Header -->
         <div class="flex flex-wrap justify-between items-center gap-4 p-4">
             <div>
-                <h1 class="text-4xl font-black text-gray-900 dark:text-white">Profil Düzenle</h1>
+                <h1 class="text-2xl md:text-4xl font-black text-gray-900 dark:text-white">Profil Düzenle</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">Profil bilgilerinizi güncelleyin</p>
             </div>
             <a href="{{ url_for('user_profile', user_id=current_user.id) }}" class="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary">
@@ -18,59 +18,60 @@
         </div>
         
         <!-- Edit Form -->
-        <form method="POST" action="{{ url_for('edit_profile') }}" class="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
+        <form method="POST" action="{{ url_for('edit_profile') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-8 border border-gray-200 dark:border-gray-700">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="space-y-6">
                 <!-- Personal Info Section -->
                 <div>
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">person</span>
                         Kişisel Bilgiler
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Ad Soyad *</p>
-                            <input name="full_name" type="text" required value="{{ current_user.full_name }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal"/>
+                            <input name="full_name" type="text" required value="{{ current_user.full_name }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal"/>
                         </label>
                         
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">E-posta (Değiştirilemez)</p>
-                            <input type="email" disabled value="{{ current_user.email }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 h-14 p-4 text-base font-normal cursor-not-allowed"/>
+                            <input type="email" disabled value="{{ current_user.email }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 h-12 md:h-12 sm:h-14 p-4 text-base font-normal cursor-not-allowed"/>
                         </label>
                     </div>
                 </div>
                 
                 <!-- Contact Info Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">phone</span>
                         İletişim Bilgileri
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Telefon Numarası *</p>
-                            <input name="phone" type="tel" required value="{{ current_user.phone }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="0555 123 45 67"/>
+                            <input name="phone" type="tel" required value="{{ current_user.phone }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="0555 123 45 67"/>
                         </label>
                         
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">WhatsApp Numarası</p>
-                            <input name="whatsapp_number" type="tel" value="{{ current_user.whatsapp_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="0555 123 45 67"/>
+                            <input name="whatsapp_number" type="tel" value="{{ current_user.whatsapp_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="0555 123 45 67"/>
                         </label>
                     </div>
                 </div>
                 
                 <!-- Location Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">location_on</span>
                         Konum Bilgileri
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Şehir *</p>
-                            <select name="city" required class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 p-4 text-base font-normal">
+                            <select name="city" required class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-14 p-4 text-base font-normal">
                                 <option value="">Şehir seçiniz</option>
                                 {% for city in ['İstanbul', 'Ankara', 'İzmir', 'Bursa', 'Antalya', 'Adana', 'Konya', 'Gaziantep', 'Şanlıurfa', 'Kocaeli', 'Diyarbakır', 'Kayseri', 'Mersin', 'Eskişehir', 'Samsun'] %}
                                 <option value="{{ city }}" {% if current_user.city == city %}selected{% endif %}>{{ city }}</option>
@@ -80,22 +81,22 @@
                         
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">İlçe</p>
-                            <input name="district" type="text" value="{{ current_user.district or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="İlçe adı"/>
+                            <input name="district" type="text" value="{{ current_user.district or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="İlçe adı"/>
                         </label>
                     </div>
                 </div>
                 
                 <!-- Professional Info Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">badge</span>
                         Baro Bilgileri
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Bağlı Olduğunuz Baro *</p>
-                            <select name="bar_association" required class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 p-4 text-base font-normal">
+                            <select name="bar_association" required class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-14 p-4 text-base font-normal">
                                 <option value="">Baro seçiniz</option>
                                 {% for baro in ['İstanbul Barosu', 'Ankara Barosu', 'İzmir Barosu', 'Bursa Barosu', 'Antalya Barosu', 'Adana Barosu', 'Konya Barosu', 'Gaziantep Barosu', 'Şanlıurfa Barosu', 'Kocaeli Barosu', 'Diyarbakır Barosu', 'Mersin Barosu', 'Kayseri Barosu', 'Eskişehir Barosu', 'Hatay Barosu'] %}
                                 <option value="{{ baro }}" {% if current_user.bar_association == baro %}selected{% endif %}>{{ baro }}</option>
@@ -105,19 +106,19 @@
                         
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Baro Sicil Numarası *</p>
-                            <input name="bar_registration_number" type="text" required value="{{ current_user.bar_registration_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="Baro sicil numaranız"/>
+                            <input name="bar_registration_number" type="text" required value="{{ current_user.bar_registration_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="Baro sicil numaranız"/>
                         </label>
                         
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">T.C. Kimlik Numarası</p>
-                            <input name="tc_number" type="text" maxlength="11" pattern="[0-9]{11}" value="{{ current_user.tc_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="11 haneli T.C. Kimlik No"/>
+                            <input name="tc_number" type="text" maxlength="11" pattern="[0-9]{11}" value="{{ current_user.tc_number or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="11 haneli T.C. Kimlik No"/>
                         </label>
                         
                         {% if current_user.is_admin %}
                         <!-- Sadece Admin için görünür -->
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Avukat Türü <span class="text-red-500 text-xs">(ADMIN)</span></p>
-                            <select name="lawyer_type" class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 p-4 text-base font-normal">
+                            <select name="lawyer_type" class="form-select flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-14 p-4 text-base font-normal">
                                 <option value="avukat" {% if current_user.lawyer_type == 'avukat' %}selected{% endif %}>Avukat</option>
                                 <option value="stajyer" {% if current_user.lawyer_type == 'stajyer' %}selected{% endif %}>Stajyer Avukat</option>
                             </select>
@@ -136,14 +137,14 @@
                 
                 <!-- Professional Info Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">work</span>
                         Mesleki Bilgiler
                     </h2>
                     
                     <label class="flex flex-col w-full mb-6">
                         <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2">Uzmanlık Alanlarınız</p>
-                        <input name="specializations" type="text" value="{{ current_user.specializations|join(', ') if current_user.specializations else '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="Ceza Hukuku, Aile Hukuku, İcra İflas Hukuku (virgülle ayırın)"/>
+                        <input name="specializations" type="text" value="{{ current_user.specializations|join(', ') if current_user.specializations else '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="Ceza Hukuku, Aile Hukuku, İcra İflas Hukuku (virgülle ayırın)"/>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Birden fazla alan varsa virgülle ayırarak yazın</p>
                     </label>
                     
@@ -155,20 +156,20 @@
                 
                 <!-- Profile Photo Upload Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">photo_camera</span>
                         Profil Fotoğrafı
                     </h2>
                     
-                    <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-3 md:gap-6">
                         <!-- Current Photo -->
                         <div class="relative group">
                             <img id="avatar-preview" 
                                  src="{{ current_user.avatar_url if current_user.avatar_url else 'https://ui-avatars.com/api/?name=' + current_user.full_name + '&background=1661da&color=fff&size=120' }}" 
                                  alt="{{ current_user.full_name }}" 
-                                 class="w-32 h-32 rounded-full border-4 border-primary/20 object-cover">
+                                 class="w-32 h-auto max-h-64 sm:max-h-96 rounded-full border-4 border-primary/20 object-cover">
                             <div class="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span class="material-symbols-outlined text-white text-3xl">edit</span>
+                                <span class="material-symbols-outlined text-white text-xl md:text-3xl">edit</span>
                             </div>
                         </div>
                         
@@ -180,7 +181,7 @@
                                        id="avatar-url-input"
                                        type="url" 
                                        value="{{ current_user.avatar_url or '' }}" 
-                                       class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" 
+                                       class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" 
                                        placeholder="https://example.com/photo.jpg"/>
                                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 flex items-start gap-2">
                                     <span class="material-symbols-outlined text-base">info</span>
@@ -192,7 +193,7 @@
                             <div class="mt-4 flex gap-3">
                                 <button type="button" 
                                         onclick="document.getElementById('avatar-url-input').value=''; updateAvatarPreview();" 
-                                        class="px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2">
+                                        class="px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2 w-full sm:w-auto">
                                     <span class="material-symbols-outlined text-lg">delete</span>
                                     Fotoğrafı Kaldır
                                 </button>
@@ -221,12 +222,12 @@
                 
                 <!-- Social Media Section -->
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
-                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <h2 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">share</span>
                         Sosyal Medya Bağlantıları
                     </h2>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
                         <!-- LinkedIn -->
                         <label class="flex flex-col w-full">
                             <p class="text-gray-900 dark:text-white text-base font-medium leading-normal pb-2 flex items-center gap-2">
@@ -235,7 +236,7 @@
                                 </svg>
                                 LinkedIn
                             </p>
-                            <input name="linkedin_url" type="url" value="{{ current_user.linkedin_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://linkedin.com/in/kullaniciadi"/>
+                            <input name="linkedin_url" type="url" value="{{ current_user.linkedin_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://linkedin.com/in/kullaniciadi"/>
                         </label>
                         
                         <!-- Twitter/X -->
@@ -246,7 +247,7 @@
                                 </svg>
                                 Twitter/X
                             </p>
-                            <input name="twitter_url" type="url" value="{{ current_user.twitter_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://twitter.com/kullaniciadi"/>
+                            <input name="twitter_url" type="url" value="{{ current_user.twitter_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://twitter.com/kullaniciadi"/>
                         </label>
                         
                         <!-- Instagram -->
@@ -257,7 +258,7 @@
                                 </svg>
                                 Instagram
                             </p>
-                            <input name="instagram_url" type="url" value="{{ current_user.instagram_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://instagram.com/kullaniciadi"/>
+                            <input name="instagram_url" type="url" value="{{ current_user.instagram_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://instagram.com/kullaniciadi"/>
                         </label>
                         
                         <!-- Website -->
@@ -266,7 +267,7 @@
                                 <span class="material-symbols-outlined text-lg">language</span>
                                 Kişisel Website
                             </p>
-                            <input name="website_url" type="url" value="{{ current_user.website_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://www.example.com"/>
+                            <input name="website_url" type="url" value="{{ current_user.website_url or '' }}" class="form-input flex w-full resize-none overflow-hidden rounded-lg text-gray-900 dark:text-white dark:bg-background-dark focus:outline-0 focus:ring-2 focus:ring-primary border border-gray-300 dark:border-gray-600 bg-white h-12 md:h-12 sm:h-14 placeholder:text-gray-400 p-4 text-base font-normal" placeholder="https://www.example.com"/>
                         </label>
                     </div>
                     
@@ -283,7 +284,7 @@
                     <a href="{{ url_for('user_profile', user_id=current_user.id) }}" class="px-6 py-3 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                         İptal
                     </a>
-                    <button type="submit" class="px-8 py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2">
+                    <button type="submit" class="px-4 md:px-8 py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2 w-full sm:w-auto">
                         <span class="material-symbols-outlined">save</span>
                         Değişiklikleri Kaydet
                     </button>

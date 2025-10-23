@@ -54,6 +54,7 @@
 <body>
     <h1>Görevi Düzenle</h1>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <label>Başlık:</label>
         <input type="text" name="baslik" value="{{ gorev[1] }}" required>
 

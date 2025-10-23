@@ -3,135 +3,360 @@
 {% block title %}Dashboard - Ulusal Tevkil Ağı Projesi{% endblock %}
 
 {% block content %}
-<div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
-    <div class="layout-content-container flex flex-col max-w-7xl flex-1">
+<div class="px-4 sm:px-6 md:px-12 lg:px-20 xl:px-40 flex flex-1 justify-center py-5">
+    <div class="layout-content-container flex flex-col max-w-[1400px] flex-1">
         <!-- Welcome Header -->
-        <div class="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center gap-3 sm:gap-4 p-4">
+        <div class="flex flex-wrap justify-between items-center gap-3 p-4 mb-2">
             <div>
-                <p class="text-gray-900 dark:text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
+                <p class="text-gray-900 dark:text-white text-2xl sm:text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">
                     Hoş Geldiniz, {{ current_user.full_name.split()[0] }}!
                 </p>
-                <p class="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-1 sm:mt-2">
+                <p class="text-gray-600 dark:text-gray-400 text-base mt-2">
                     İşte hesabınızın genel durumu
                 </p>
             </div>
-            <a href="{{ url_for('create_post') }}" class="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 sm:h-12 px-4 sm:px-5 bg-primary text-white text-sm sm:text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors">
-                <span class="material-symbols-outlined mr-2 text-lg sm:text-xl">add</span>
+            <a href="{{ url_for('create_post') }}" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined mr-2">add</span>
                 Yeni İlan
             </a>
         </div>
         
         <!-- Stats Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 px-4 py-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 p-4">
             <!-- Aktif İlanlarım -->
-            <a href="{{ url_for('list_posts', filter='my_active') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary transition-all duration-200 cursor-pointer">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Aktif İlanlarım</p>
-                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
+            <a href="{{ url_for('list_posts', filter='my_active') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary transition-all duration-200 cursor-pointer">
+                <div class="flex gap-4">
+                    <div class="flex items-start justify-center">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-primary text-2xl">list_alt</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Aktif İlanlarım</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white">
                             {{ my_posts|selectattr('status', 'equalto', 'active')|list|length }}
                         </p>
-                    </div>
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary text-xl sm:text-2xl">list_alt</span>
                     </div>
                 </div>
             </a>
             
             <!-- Gelen Başvurular -->
-            <a href="{{ url_for('applications_received') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-500 transition-all duration-200 cursor-pointer">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Gelen Başvurular</p>
-                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
+            <a href="{{ url_for('applications_received') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-500 transition-all duration-200 cursor-pointer">
+                <div class="flex gap-4">
+                    <div class="flex items-start justify-center">
+                        <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">inbox</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Gelen Başvurular</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white">
                             {{ incoming_applications|length }}
                         </p>
-                    </div>
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-xl sm:text-2xl">inbox</span>
                     </div>
                 </div>
             </a>
             
             <!-- Başvurularım -->
-            <a href="{{ url_for('applications_sent') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-purple-500 transition-all duration-200 cursor-pointer">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Başvurularım</p>
-                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
+            <a href="{{ url_for('applications_sent') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-purple-500 transition-all duration-200 cursor-pointer">
+                <div class="flex gap-4">
+                    <div class="flex items-start justify-center">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">send</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Başvurularım</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white">
                             {{ my_applications|length }}
                         </p>
-                    </div>
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-xl sm:text-2xl">send</span>
                     </div>
                 </div>
             </a>
             
             <!-- Tamamlanan -->
-            <a href="{{ url_for('list_posts', filter='my_completed') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-yellow-500 transition-all duration-200 cursor-pointer">
-                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div class="flex-1">
-                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Tamamlanan</p>
-                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
+            <a href="{{ url_for('list_posts', filter='my_completed') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-yellow-500 transition-all duration-200 cursor-pointer">
+                <div class="flex gap-4">
+                    <div class="flex items-start justify-center">
+                        <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-2xl">check_circle</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1 flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Tamamlanan</p>
+                        <p class="text-3xl font-black text-gray-900 dark:text-white">
                             {{ my_posts|selectattr('status', 'equalto', 'completed')|list|length }}
                         </p>
-                    </div>
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-xl sm:text-2xl">check_circle</span>
                     </div>
                 </div>
             </a>
         </div>
         
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 px-4 py-3">
+        <div class="px-4 py-3">
             <!-- Applications Trend Chart -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700 mb-4">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
                     <span class="material-symbols-outlined text-primary">trending_up</span>
                     Başvuru Trendi (Son 6 Ay)
                 </h3>
-                <canvas id="applicationsChart"></canvas>
+                <canvas id="applicationsChart" class="h-64"></canvas>
             </div>
-            
-            <!-- Category Distribution Chart -->
-            <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
-                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                    <span class="material-symbols-outlined text-primary">pie_chart</span>
-                    İlan Kategorileri
-                </h3>
-                <canvas id="categoriesChart"></canvas>
+        
+        <!-- Performance Stats Carousel -->
+        <div class="px-4 py-3">
+            <div class="relative overflow-hidden rounded-xl">
+                <!-- Carousel Container -->
+                <div id="statsCarousel" class="flex transition-transform duration-700 ease-in-out">
+                    <!-- Slide 1: İlan Kategorileri -->
+                    <div class="min-w-full">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-700">
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary">pie_chart</span>
+                                İlan Kategorileri Dağılımı
+                            </h3>
+                            <div class="h-64">
+                                <canvas id="categoriesChartCarousel"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 2: Tamamlanan İş -->
+                    <div class="min-w-full">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 md:p-8 text-white h-full flex flex-col justify-center">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="material-symbols-outlined text-6xl opacity-80">emoji_events</span>
+                                <span class="text-lg opacity-80">Bu Ay</span>
+                            </div>
+                            <p class="text-6xl font-black mb-2">{{ monthly_completed }}</p>
+                            <p class="text-xl opacity-90">Tamamlanan İş</p>
+                            <div class="mt-4 pt-4 border-t border-white/30">
+                                <p class="text-sm opacity-80">🎯 Hedefin %{{ ((monthly_completed / 10.0) * 100)|int }} tamamlandı</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 3: Tahmini Kazanç -->
+                    <div class="min-w-full">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 md:p-8 text-white h-full flex flex-col justify-center">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="material-symbols-outlined text-6xl opacity-80">currency_lira</span>
+                                <span class="text-lg opacity-80">Toplam</span>
+                            </div>
+                            <p class="text-6xl font-black mb-2">{{ total_earnings|default(0)|int }} TL</p>
+                            <p class="text-xl opacity-90">Tahmini Kazanç</p>
+                            <div class="mt-4 pt-4 border-t border-white/30">
+                                <p class="text-sm opacity-80">💰 Ortalama iş başı: {{ (total_earnings / (monthly_completed if monthly_completed > 0 else 1))|int }} TL</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Slide 4: Değerlendirme -->
+                    <div class="min-w-full">
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 md:p-8 text-white h-full flex flex-col justify-center">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="material-symbols-outlined text-6xl opacity-80">star</span>
+                                <span class="text-lg opacity-80">Ortalama</span>
+                            </div>
+                            <p class="text-6xl font-black mb-2">{{ avg_rating|default(0)|round(1) }}</p>
+                            <p class="text-xl opacity-90">Değerlendirme Puanı</p>
+                            <div class="mt-4 pt-4 border-t border-white/30">
+                                <div class="flex gap-1">
+                                    {% for i in range(5) %}
+                                        {% if i < (avg_rating|default(0))|int %}
+                                            <span class="material-symbols-outlined text-yellow-300">star</span>
+                                        {% else %}
+                                            <span class="material-symbols-outlined text-white/30">star</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Carousel Indicators -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
+                    <button onclick="goToSlide(0)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors" data-slide="0"></button>
+                    <button onclick="goToSlide(1)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors" data-slide="1"></button>
+                    <button onclick="goToSlide(2)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors" data-slide="2"></button>
+                    <button onclick="goToSlide(3)" class="carousel-indicator w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-colors" data-slide="3"></button>
+                </div>
             </div>
         </div>
         
-        <!-- Performance Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 px-4 py-3">
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="material-symbols-outlined text-4xl opacity-80">emoji_events</span>
-                    <span class="text-sm opacity-80">Bu Ay</span>
+        <!-- Achievement Badges Section -->
+        <div class="px-4 py-3">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">military_tech</span>
+                    Başarı Rozetleri
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    <!-- İlk İlan Rozeti -->
+                    <div class="flex flex-col items-center p-4 rounded-lg {% if my_posts|length > 0 %}bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-2 border-blue-300 dark:border-blue-700{% else %}bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50{% endif %} transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 {% if my_posts|length > 0 %}text-blue-600 dark:text-blue-400{% else %}text-gray-400{% endif %}">rocket_launch</span>
+                        <p class="text-xs font-semibold text-center {% if my_posts|length > 0 %}text-blue-900 dark:text-blue-300{% else %}text-gray-500{% endif %}">İlk İlan</p>
+                        {% if my_posts|length > 0 %}
+                        <p class="text-xs text-blue-600 dark:text-blue-400 mt-1">✓ Kazanıldı</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 5 İlan Rozeti -->
+                    <div class="flex flex-col items-center p-4 rounded-lg {% if my_posts|length >= 5 %}bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-2 border-green-300 dark:border-green-700{% else %}bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50{% endif %} transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 {% if my_posts|length >= 5 %}text-green-600 dark:text-green-400{% else %}text-gray-400{% endif %}">workspace_premium</span>
+                        <p class="text-xs font-semibold text-center {% if my_posts|length >= 5 %}text-green-900 dark:text-green-300{% else %}text-gray-500{% endif %}">5 İlan</p>
+                        {% if my_posts|length >= 5 %}
+                        <p class="text-xs text-green-600 dark:text-green-400 mt-1">✓ Kazanıldı</p>
+                        {% else %}
+                        <p class="text-xs text-gray-500 mt-1">{{ my_posts|length }}/5</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 10 Başvuru Rozeti -->
+                    <div class="flex flex-col items-center p-4 rounded-lg {% if my_applications|length >= 10 %}bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border-2 border-purple-300 dark:border-purple-700{% else %}bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50{% endif %} transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 {% if my_applications|length >= 10 %}text-purple-600 dark:text-purple-400{% else %}text-gray-400{% endif %}">send</span>
+                        <p class="text-xs font-semibold text-center {% if my_applications|length >= 10 %}text-purple-900 dark:text-purple-300{% else %}text-gray-500{% endif %}">10 Başvuru</p>
+                        {% if my_applications|length >= 10 %}
+                        <p class="text-xs text-purple-600 dark:text-purple-400 mt-1">✓ Kazanıldı</p>
+                        {% else %}
+                        <p class="text-xs text-gray-500 mt-1">{{ my_applications|length }}/10</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- İlk İş Tamamlama Rozeti -->
+                    <div class="flex flex-col items-center p-4 rounded-lg {% if my_posts|selectattr('status', 'equalto', 'completed')|list|length > 0 %}bg-gradient-to-br from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 border-2 border-yellow-300 dark:border-yellow-700{% else %}bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50{% endif %} transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 {% if my_posts|selectattr('status', 'equalto', 'completed')|list|length > 0 %}text-yellow-600 dark:text-yellow-400{% else %}text-gray-400{% endif %}">check_circle</span>
+                        <p class="text-xs font-semibold text-center {% if my_posts|selectattr('status', 'equalto', 'completed')|list|length > 0 %}text-yellow-900 dark:text-yellow-300{% else %}text-gray-500{% endif %}">İlk İş</p>
+                        {% if my_posts|selectattr('status', 'equalto', 'completed')|list|length > 0 %}
+                        <p class="text-xs text-yellow-600 dark:text-yellow-400 mt-1">✓ Tamamlandı</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Erken Kuş Rozeti (sabah 8'den önce ilan) -->
+                    <div class="flex flex-col items-center p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50 transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 text-gray-400">light_mode</span>
+                        <p class="text-xs font-semibold text-center text-gray-500">Erken Kuş</p>
+                        <p class="text-xs text-gray-400 mt-1">Yakında</p>
+                    </div>
+                    
+                    <!-- Gece Kuşu Rozeti (gece 22'den sonra ilan) -->
+                    <div class="flex flex-col items-center p-4 rounded-lg bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 opacity-50 transition-all">
+                        <span class="material-symbols-outlined text-2xl md:text-4xl mb-2 text-gray-400">dark_mode</span>
+                        <p class="text-xs font-semibold text-center text-gray-500">Gece Kuşu</p>
+                        <p class="text-xs text-gray-400 mt-1">Yakında</p>
+                    </div>
                 </div>
-                <p class="text-3xl font-black">{{ monthly_completed }}</p>
-                <p class="text-sm opacity-90 mt-1">Tamamlanan İş</p>
             </div>
-            
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="material-symbols-outlined text-4xl opacity-80">currency_lira</span>
-                    <span class="text-sm opacity-80">Toplam</span>
+        </div>
+        
+        <!-- Recent Activity Timeline -->
+        <div class="px-4 py-3">
+            <div class="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">history</span>
+                    Son Aktiviteler
+                </h3>
+                <div class="relative">
+                    <!-- Timeline Line -->
+                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700"></div>
+                    
+                    <div class="space-y-6">
+                        {% set recent_activities = [] %}
+                        
+                        {% for post in my_posts[:3] %}
+                            {% set _ = recent_activities.append({
+                                'type': 'post',
+                                'icon': 'add_circle',
+                                'color': 'blue',
+                                'title': 'Yeni ilan oluşturdunuz',
+                                'description': post.title,
+                                'time': post.created_at,
+                                'link': url_for('post_detail', post_id=post.id)
+                            }) %}
+                        {% endfor %}
+                        
+                        {% for app in my_applications[:3] %}
+                            {% set _ = recent_activities.append({
+                                'type': 'application',
+                                'icon': 'send',
+                                'color': 'purple',
+                                'title': 'Başvuru yaptınız',
+                                'description': app.post.title if app.post else 'Bir ilana',
+                                'time': app.created_at,
+                                'link': url_for('post_detail', post_id=app.post_id)
+                            }) %}
+                        {% endfor %}
+                        
+                        {% for app in incoming_applications[:3] %}
+                            {% set _ = recent_activities.append({
+                                'type': 'incoming',
+                                'icon': 'inbox',
+                                'color': 'green',
+                                'title': 'Yeni başvuru aldınız',
+                                'description': app.applicant.full_name + ' başvurdu',
+                                'time': app.created_at,
+                                'link': url_for('applications_received')
+                            }) %}
+                        {% endfor %}
+                        
+                        {% for activity in (recent_activities | sort(attribute='time', reverse=True))[:8] %}
+                        <div class="relative flex items-start gap-4 pl-12">
+                            <div class="absolute left-0 w-8 h-8 rounded-full bg-{{ activity.color }}-100 dark:bg-{{ activity.color }}-900/30 flex items-center justify-center border-2 border-white dark:border-gray-800">
+                                <span class="material-symbols-outlined text-{{ activity.color }}-600 dark:text-{{ activity.color }}-400 text-sm">{{ activity.icon }}</span>
+                            </div>
+                            <div class="flex-1">
+                                <a href="{{ activity.link }}" class="block hover:bg-gray-50 dark:hover:bg-gray-900/50 -m-2 p-2 rounded-lg transition-colors">
+                                    <p class="font-semibold text-gray-900 dark:text-white text-sm">{{ activity.title }}</p>
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm mt-1">{{ activity.description }}</p>
+                                    <p class="text-gray-500 dark:text-gray-500 text-xs mt-1">
+                                        {{ activity.time.strftime('%d %B %Y, %H:%M') }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        {% if not recent_activities %}
+                        <div class="text-center py-4 md:py-8">
+                            <span class="material-symbols-outlined text-6xl text-gray-300 dark:text-gray-700 mb-4">inbox</span>
+                            <p class="text-gray-500 dark:text-gray-400">Henüz aktivite yok</p>
+                            <a href="{{ url_for('create_post') }}" class="inline-block mt-4 text-primary hover:underline">İlk ilanınızı oluşturun</a>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <p class="text-3xl font-black">{{ total_earnings|default(0)|int }} TL</p>
-                <p class="text-sm opacity-90 mt-1">Tahmini Kazanç</p>
             </div>
-            
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="material-symbols-outlined text-4xl opacity-80">star</span>
-                    <span class="text-sm opacity-80">Ortalama</span>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="px-4 py-3">
+            <div class="bg-gradient-to-br from-primary/10 to-blue-500/10 dark:from-primary/20 dark:to-blue-500/20 rounded-xl p-3 md:p-6 border border-primary/30">
+                <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-primary">bolt</span>
+                    Hızlı Eylemler
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <a href="{{ url_for('create_post') }}" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                        <span class="material-symbols-outlined text-primary text-xl md:text-3xl mb-2">add_circle</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white text-center">Yeni İlan</span>
+                    </a>
+                    
+                    <a href="{{ url_for('list_posts') }}" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-xl md:text-3xl mb-2">search</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white text-center">İlan Ara</span>
+                    </a>
+                    
+                    <a href="{{ url_for('chat') }}" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-xl md:text-3xl mb-2">chat</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white text-center">Mesajlar</span>
+                    </a>
+                    
+                    <a href="{{ url_for('map_view') }}" class="flex flex-col items-center justify-center p-4 bg-white dark:bg-gray-800 rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                        <span class="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl md:text-3xl mb-2">map</span>
+                        <span class="text-sm font-semibold text-gray-900 dark:text-white text-center">Harita</span>
+                    </a>
                 </div>
-                <p class="text-3xl font-black">{{ avg_rating|default(0)|round(1) }}</p>
-                <p class="text-sm opacity-90 mt-1">Değerlendirme</p>
             </div>
         </div>
         
@@ -155,7 +380,7 @@
             {% if my_posts %}
             <div class="space-y-4">
                 {% for post in my_posts %}
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-2">
@@ -222,7 +447,7 @@
             {% if incoming_applications %}
             <div class="space-y-4">
                 {% for app in incoming_applications %}
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <h4 class="font-bold text-gray-900 dark:text-white">{{ app.post.title }}</h4>
@@ -239,11 +464,13 @@
                         {% if app.status == 'pending' %}
                         <div class="flex gap-2 ml-4">
                             <form method="POST" action="{{ url_for('accept_application', app_id=app.id) }}" class="inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button type="submit" class="px-4 py-2 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-colors">
                                     Kabul Et
                                 </button>
                             </form>
                             <form method="POST" action="{{ url_for('reject_application', app_id=app.id) }}" class="inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                 <button type="submit" class="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600 transition-colors">
                                     Reddet
                                 </button>
@@ -272,7 +499,7 @@
             {% if my_applications %}
             <div class="space-y-4">
                 {% for app in my_applications %}
-                <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-gray-800 rounded-xl p-3 md:p-6 border border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-start">
                         <div class="flex-1">
                             <h4 class="font-bold text-gray-900 dark:text-white">{{ app.post.title }}</h4>
@@ -399,9 +626,9 @@ function showTab(tabName) {
         }
     });
     
-    // Categories Distribution Chart
-    const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
-    new Chart(categoriesCtx, {
+    // Categories Distribution Chart (for carousel)
+    const categoriesCarouselCtx = document.getElementById('categoriesChartCarousel').getContext('2d');
+    new Chart(categoriesCarouselCtx, {
         type: 'doughnut',
         data: {
             labels: {{ category_labels|tojson }},
@@ -422,7 +649,7 @@ function showTab(tabName) {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: true,
@@ -433,12 +660,60 @@ function showTab(tabName) {
                             family: 'Manrope',
                             size: 11
                         },
-                        padding: 15
+                        padding: 10
                     }
                 }
             }
         }
     });
+    
+    // Carousel Functionality
+    let currentSlide = 0;
+    const totalSlides = 4;
+    const carousel = document.getElementById('statsCarousel');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+    
+    function updateCarousel() {
+        const offset = -currentSlide * 100;
+        carousel.style.transform = `translateX(${offset}%)`;
+        
+        // Update indicators
+        indicators.forEach((indicator, index) => {
+            if (index === currentSlide) {
+                indicator.classList.add('bg-white');
+                indicator.classList.remove('bg-white/50');
+            } else {
+                indicator.classList.add('bg-white/50');
+                indicator.classList.remove('bg-white');
+            }
+        });
+    }
+    
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        updateCarousel();
+    }
+    
+    function goToSlide(index) {
+        currentSlide = index;
+        updateCarousel();
+    }
+    
+    // Auto-advance carousel every 4 seconds
+    let carouselInterval = setInterval(nextSlide, 4000);
+    
+    // Pause on hover
+    const carouselContainer = carousel.parentElement;
+    carouselContainer.addEventListener('mouseenter', () => {
+        clearInterval(carouselInterval);
+    });
+    
+    carouselContainer.addEventListener('mouseleave', () => {
+        carouselInterval = setInterval(nextSlide, 4000);
+    });
+    
+    // Initialize
+    updateCarousel();
 </script>
 {% endblock %}
 

@@ -6,7 +6,7 @@
 <div class="layout-content-container flex flex-col max-w-6xl mx-auto flex-1">
     <div class="flex flex-wrap justify-between gap-3 p-4">
         <div class="flex items-center gap-4">
-            <span class="material-symbols-outlined text-primary text-4xl">mail</span>
+            <span class="material-symbols-outlined text-primary text-2xl md:text-4xl">mail</span>
             <div>
                 <p class="text-gray-900 dark:text-white tracking-light text-[32px] font-bold leading-tight">Mesajlar</p>
                 <p class="text-gray-600 dark:text-gray-300 text-sm font-normal leading-normal">
@@ -22,11 +22,11 @@
     
     <!-- Tabs -->
     <div class="border-b border-gray-200 dark:border-gray-700 px-4">
-        <div class="flex gap-8">
-            <button onclick="switchTab('received')" id="tab-received" class="tab-button py-3 px-1 border-b-2 border-primary text-primary font-semibold">
+        <div class="flex gap-4 md:gap-8">
+            <button onclick="switchTab('received')" id="tab-received" class="tab-button py-3 px-1 border-b-2 border-primary text-primary font-semibold w-full sm:w-auto">
                 Gelen Kutusu ({{ received|length }})
             </button>
-            <button onclick="switchTab('sent')" id="tab-sent" class="tab-button py-3 px-1 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-semibold">
+            <button onclick="switchTab('sent')" id="tab-sent" class="tab-button py-3 px-1 border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-semibold w-full sm:w-auto">
                 Gönderilmiş ({{ sent|length }})
             </button>
         </div>

@@ -6,7 +6,7 @@
 <div class="layout-content-container flex flex-col max-w-6xl mx-auto flex-1">
     <div class="flex flex-wrap justify-between gap-3 p-4">
         <div class="flex items-center gap-4">
-            <span class="material-symbols-outlined text-primary text-4xl">favorite</span>
+            <span class="material-symbols-outlined text-primary text-2xl md:text-4xl">favorite</span>
             <div>
                 <p class="text-gray-900 dark:text-white tracking-light text-[32px] font-bold leading-tight">Favori İlanlarım</p>
                 <p class="text-gray-600 dark:text-gray-300 text-sm font-normal leading-normal">
@@ -18,11 +18,11 @@
     
     <div class="p-4">
         {% if favorites %}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {% for fav in favorites %}
                 {% set post = fav.post %}
                 <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
-                    <div class="p-6">
+                    <div class="p-3 md:p-6">
                         <!-- Header -->
                         <div class="flex justify-between items-start mb-3">
                             {% if post.urgency_level == 'urgent' %}
@@ -33,7 +33,7 @@
                             <div></div>
                             {% endif %}
                             
-                            <button onclick="toggleFavorite({{ post.id }}, this)" class="text-red-500 hover:text-red-600 transition-colors">
+                            <button onclick="toggleFavorite({{ post.id }}, this)" class="text-red-500 hover:text-red-600 transition-colors w-full sm:w-auto">
                                 <span class="material-symbols-outlined filled">favorite</span>
                             </button>
                         </div>

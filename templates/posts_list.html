@@ -36,15 +36,21 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto py-4 lg:py-8 px-4">
+<div class="container mx-auto py-4 lg:py-4 md:py-8 px-4">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-4 lg:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h1 class="text-2xl lg:text-3xl font-bold text-text dark:text-white">İlanlar</h1>
-            <a href="{{ url_for('create_post') }}" class="bg-primary hover:bg-primary-dark text-white px-4 lg:px-6 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm lg:text-base w-full sm:w-auto justify-center">
-                <span class="material-symbols-outlined text-lg">add</span>
-                <span>Yeni İlan</span>
-            </a>
+            <h1 class="text-2xl lg:text-xl md:text-3xl font-bold text-text dark:text-white">İlanlar</h1>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <a href="{{ url_for('map_view') }}" class="bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-4 lg:px-6 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm lg:text-base flex-1 sm:flex-initial justify-center border border-blue-200 dark:border-blue-800">
+                    <span class="material-symbols-outlined text-lg">map</span>
+                    <span>Harita Görünümü</span>
+                </a>
+                <a href="{{ url_for('create_post') }}" class="bg-primary hover:bg-primary-dark text-white px-4 lg:px-6 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm lg:text-base flex-1 sm:flex-initial justify-center">
+                    <span class="material-symbols-outlined text-lg">add</span>
+                    <span>Yeni İlan</span>
+                </a>
+            </div>
         </div>
 
         <!-- Search and Filters Card -->
@@ -124,7 +130,7 @@
         {% if posts %}
         <div class="space-y-4" id="postsContainer">
             {% for post in posts %}
-            <div class="bg-background-light dark:bg-slate-800 rounded-xl p-4 lg:p-6 border border-border dark:border-slate-700 hover:shadow-lg hover:border-primary transition-all duration-200 post-card"
+            <div class="bg-background-light dark:bg-slate-800 rounded-xl p-4 lg:p-3 md:p-6 border border-border dark:border-slate-700 hover:shadow-lg hover:border-primary transition-all duration-200 post-card"
                  data-title="{{ post.title|lower }}"
                  data-description="{{ post.description|lower }}"
                  data-city="{{ post.city|lower if post.city else '' }}"
@@ -205,7 +211,7 @@
                         {% endif %}
                         
                         <!-- Post Details Grid -->
-                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4">
+                        <div class="grid grid-cols-2 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4">
                             <!-- Location -->
                             <div class="flex items-start gap-1.5 lg:gap-2">
                                 <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-lg lg:text-xl mt-0.5">location_on</span>
@@ -303,7 +309,7 @@
             <span class="material-symbols-outlined text-6xl text-text-light dark:text-slate-600 mb-4 block">inbox</span>
             <h3 class="text-xl font-semibold text-text dark:text-white mb-2">Henüz ilan bulunmuyor</h3>
             <p class="text-text-light dark:text-slate-400 mb-6">İlk ilanı siz oluşturun ve meslektaşlarınızla paylaşın!</p>
-            <a href="{{ url_for('create_post') }}" class="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
+            <a href="{{ url_for('create_post') }}" class="bg-primary text-white px-4 md:px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors inline-flex items-center gap-2">
                 <span class="material-symbols-outlined">add</span>
                 Yeni İlan Oluştur
             </a>

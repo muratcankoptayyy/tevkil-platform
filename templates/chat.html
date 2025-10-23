@@ -1,0 +1,732 @@
+{% extends "base.html" %}
+
+{% block title %}Sohbetler - Ulusal Tevkil Ağı Projesi{% endblock %}
+
+{% block content %}
+<div class="h-screen flex flex-col">
+    <!-- Header -->
+    <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-primary text-xl md:text-3xl">chat</span>
+                <div>
+                    <h1 class="text-lg md:text-2xl font-bold text-gray-900 dark:text-white">Sohbetler</h1>
+                    {% if total_unread > 0 %}
+                    <p class="text-sm text-red-600 dark:text-red-400 font-semibold">
+                        {{ total_unread }} okunmamış mesaj
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Container - WhatsApp Style -->
+    <div class="flex-1 flex overflow-hidden bg-gray-100 dark:bg-gray-900">
+        <!-- Left Sidebar - Conversations List -->
+        <div class="w-full md:w-96 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+            <!-- Search -->
+            <div class="p-3 border-b border-gray-200 dark:border-gray-700">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xl">
+                        search
+                    </span>
+                    <input type="text" id="searchConversations" 
+                           placeholder="Sohbet ara..." 
+                           class="w-full pl-10 pr-4 py-2 rounded-lg bg-gray-100 dark:bg-gray-700 border-0 focus:ring-2 focus:ring-primary text-gray-900 dark:text-white">
+                </div>
+            </div>
+
+            <!-- Conversations List -->
+            <div class="flex-1 overflow-y-auto" id="conversationsList">
+                {% if conversations %}
+                    {% for conv in conversations %}
+                    {% set other = conv.get_other_user(current_user.id) %}
+                    {% set unread = conv.get_unread_count(current_user.id) %}
+                    <a href="{{ url_for('chat_conversation', conversation_id=conv.id) }}" 
+                       class="conversation-item flex items-center gap-3 p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors {% if active_conversation and active_conversation.id == conv.id %}bg-blue-50 dark:bg-blue-900/20 border-l-4 border-l-primary{% endif %}">
+                        <!-- Avatar -->
+                        <div class="relative">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">
+                                {{ other.full_name[0] }}
+                            </div>
+                            {% if unread > 0 %}
+                            <div class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                {{ unread if unread < 10 else '9+' }}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Conversation Info -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline mb-1">
+                                <p class="font-semibold text-gray-900 dark:text-white truncate">
+                                    {{ other.full_name }}
+                                </p>
+                                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2 flex-shrink-0">
+                                    {% if conv.last_message_at.date() == today %}
+                                        {{ conv.last_message_at.strftime('%H:%M') }}
+                                    {% else %}
+                                        {{ conv.last_message_at.strftime('%d.%m') }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            {% if conv.post %}
+                            <p class="text-xs text-blue-600 dark:text-blue-400 mb-1 truncate">
+                                📄 {{ conv.post.title }}
+                            </p>
+                            {% endif %}
+                            
+                            <div class="flex items-center gap-2">
+                                {% if conv.last_message_sender_id == current_user.id %}
+                                <span class="material-symbols-outlined text-gray-400 text-sm">done_all</span>
+                                {% endif %}
+                                <p class="text-sm text-gray-600 dark:text-gray-400 truncate {% if unread > 0 %}font-semibold text-gray-900 dark:text-white{% endif %}">
+                                    {{ conv.last_message_text if conv.last_message_text else 'Mesaj yok' }}
+                                </p>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="flex flex-col items-center justify-center h-full p-4 md:p-8 text-center">
+                        <span class="material-symbols-outlined text-gray-300 dark:text-gray-600 text-6xl mb-4">chat_bubble_outline</span>
+                        <p class="text-gray-500 dark:text-gray-400 text-lg font-medium">Henüz sohbetiniz yok</p>
+                        <p class="text-gray-400 dark:text-gray-500 text-sm mt-2">İlan sahipleriyle iletişime geçerek sohbet başlatabilirsiniz</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Panel - Active Chat -->
+        <div class="flex-1 flex flex-col">
+            {% if active_conversation %}
+                <!-- Chat Header -->
+                <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                            {{ other_user.full_name[0] }}
+                        </div>
+                        <div>
+                            <p class="font-semibold text-gray-900 dark:text-white">{{ other_user.full_name }}</p>
+                            <div class="flex items-center gap-2" id="userOnlineStatus">
+                                <span class="text-xs text-gray-500">Durum kontrol ediliyor...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if active_conversation.post %}
+                    <a href="{{ url_for('post_detail', post_id=active_conversation.post_id) }}" 
+                       class="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium">
+                        <span class="material-symbols-outlined text-lg">description</span>
+                        İlana Git
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Messages Area -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900" id="messagesContainer">
+                    {% for msg in messages %}
+                    <div class="flex {% if msg.sender_id == current_user.id %}justify-end{% else %}justify-start{% endif %} message-bubble" data-message-id="{{ msg.id }}">
+                        <div class="max-w-xs lg:max-w-full mx-4 sm:max-w-md xl:max-w-full mx-4 sm:max-w-lg">
+                            <!-- Reply to message (if any) -->
+                            {% if msg.reply_to %}
+                            <div class="bg-gray-200 dark:bg-gray-700 rounded-lg px-3 py-2 mb-2 border-l-4 border-gray-400">
+                                <p class="text-xs text-gray-600 dark:text-gray-400 font-semibold mb-1">
+                                    {{ msg.reply_to.sender.full_name }}
+                                </p>
+                                <p class="text-sm text-gray-700 dark:text-gray-300 truncate">
+                                    {{ msg.reply_to.message[:50] }}...
+                                </p>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Message bubble -->
+                            <div class="{% if msg.sender_id == current_user.id %}bg-primary text-white{% else %}bg-white dark:bg-gray-800 text-gray-900 dark:text-white{% endif %} rounded-xl sm:rounded-2xl px-4 py-2 shadow-sm">
+                                <p class="text-sm break-words whitespace-pre-wrap">{{ msg.message }}</p>
+                                <div class="flex items-center justify-end gap-1 mt-1">
+                                    <span class="text-xs opacity-70">{{ msg.created_at.strftime('%H:%M') }}</span>
+                                    {% if msg.sender_id == current_user.id %}
+                                        {% if msg.read_at %}
+                                        <span class="material-symbols-outlined text-xs" style="font-size: 14px;">done_all</span>
+                                        {% else %}
+                                        <span class="material-symbols-outlined text-xs opacity-50" style="font-size: 14px;">done</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- Typing Indicator -->
+                    <div id="typingIndicator" class="hidden flex justify-start px-4 py-2">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Message Input -->
+                <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
+                    <!-- File Preview Area -->
+                    <div id="filePreviewArea" class="hidden mb-3 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div id="fileIcon" class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">attach_file</span>
+                                </div>
+                                <div>
+                                    <p id="fileName" class="font-semibold text-gray-900 dark:text-white text-sm"></p>
+                                    <p id="fileSize" class="text-xs text-gray-500 dark:text-gray-400"></p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="clearFileSelection()" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-2 rounded-lg transition-colors w-full sm:w-auto">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <form id="messageForm" class="flex items-end gap-2">
+                        <!-- File Upload Button -->
+                        <button type="button" onclick="document.getElementById('fileInput').click()" 
+                                class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-400 w-full sm:w-auto"
+                                title="Dosya ekle">
+                            <span class="material-symbols-outlined">attach_file</span>
+                        </button>
+                        <input type="file" id="fileInput" class="hidden" accept="image/*,.pdf,.doc,.docx,.txt" onchange="handleFileSelect(event)">
+                        
+                        <!-- Emoji Button -->
+                        <button type="button" onclick="toggleEmojiPicker()" 
+                                class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-gray-600 dark:text-gray-400 w-full sm:w-auto"
+                                title="Emoji ekle">
+                            <span class="material-symbols-outlined">sentiment_satisfied</span>
+                        </button>
+                        
+                        <div class="flex-1 relative">
+                            <!-- Emoji Picker -->
+                            <div id="emojiPicker" class="hidden absolute bottom-full mb-2 left-0 bg-white dark:bg-gray-800 rounded-lg shadow-md sm:shadow-xl border border-gray-200 dark:border-gray-700 p-3 z-50">
+                                <div class="grid grid-cols-8 gap-2">
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('😊')">😊</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('😂')">😂</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('❤️')">❤️</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('👍')">👍</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('🎉')">🎉</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('🔥')">🔥</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('✅')">✅</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('⚖️')">⚖️</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('📄')">📄</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('📁')">📁</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('💼')">💼</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('🏛️')">🏛️</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('⏰')">⏰</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('📱')">📱</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('💡')">💡</button>
+                                    <button type="button" class="text-lg md:text-2xl hover:bg-gray-100 dark:hover:bg-gray-700 p-2 rounded transition-colors w-full sm:w-auto" onclick="insertEmoji('⚠️')">⚠️</button>
+                                </div>
+                            </div>
+                            
+                            <textarea id="messageInput" 
+                                      rows="1"
+                                      placeholder="Mesajınızı yazın..." 
+                                      class="w-full px-4 py-3 rounded-xl sm:rounded-2xl bg-gray-100 dark:bg-gray-700 border-0 focus:ring-2 focus:ring-primary resize-none text-gray-900 dark:text-white"
+                                      style="max-height: 120px;"></textarea>
+                        </div>
+                        
+                        <button type="submit" 
+                                class="flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white hover:bg-blue-600 transition-colors shadow-lg w-full sm:w-auto">
+                            <span class="material-symbols-outlined">send</span>
+                        </button>
+                    </form>
+                </div>
+
+            {% else %}
+                <!-- No chat selected -->
+                <div class="flex-1 flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined text-gray-300 dark:text-gray-600 text-8xl mb-4">chat</span>
+                        <p class="text-gray-500 dark:text-gray-400 text-xl font-medium">Sohbet seçin</p>
+                        <p class="text-gray-400 dark:text-gray-500 mt-2">Mesajlaşmaya başlamak için soldan bir sohbet seçin</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if active_conversation %}
+<script>
+const conversationId = {{ active_conversation.id }};
+let lastMessageId = {{ messages[-1].id if messages else 0 }};
+let isPolling = false;
+
+// Auto-resize textarea
+const messageInput = document.getElementById('messageInput');
+messageInput.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+});
+
+// Scroll to bottom on load
+window.addEventListener('load', () => {
+    const container = document.getElementById('messagesContainer');
+    container.scrollTop = container.scrollHeight;
+});
+
+// Send message
+document.getElementById('messageForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const message = messageInput.value.trim();
+    
+    // Dosya veya mesaj olmalı
+    if (!message && !selectedFile) return;
+    
+    try {
+        let response, data;
+        
+        // Dosya yükleme varsa
+        if (selectedFile) {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('conversation_id', conversationId);
+            formData.append('message', message);
+            
+            response = await fetch('/chat/upload', {
+                method: 'POST',
+                body: formData
+            });
+            
+            data = await response.json();
+            
+            if (data.success) {
+                // Dosya önizlemesini temizle
+                clearFileSelection();
+                
+                // Mesajı UI'a ekle
+                addMessageToUI(data.message);
+                lastMessageId = data.message.id;
+            } else {
+                alert('Dosya gönderilemedi: ' + data.error);
+            }
+        } 
+        // Normal metin mesajı
+        else {
+            response = await fetch('/chat/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    conversation_id: conversationId,
+                    message: message
+                })
+            });
+            
+            data = await response.json();
+            
+            if (data.success) {
+                // Add message to UI
+                addMessageToUI({
+                    id: data.message_id,
+                    sender_id: {{ current_user.id }},
+                    message: message,
+                    created_at: data.created_at,
+                    is_mine: true,
+                    read_at: null
+                });
+                
+                lastMessageId = data.message_id;
+            } else {
+                alert('Mesaj gönderilemedi: ' + data.error);
+            }
+        }
+        
+        // Clear input
+        messageInput.value = '';
+        messageInput.style.height = 'auto';
+        
+    } catch (error) {
+        console.error('Error sending message:', error);
+        alert('Bir hata oluştu');
+    }
+});
+
+// Poll for new messages every 3 seconds
+setInterval(async () => {
+    if (isPolling) return;
+    isPolling = true;
+    
+    try {
+        const response = await fetch(`/chat/messages/${conversationId}/new?since_id=${lastMessageId}`);
+        const data = await response.json();
+        
+        if (data.success && data.messages.length > 0) {
+            data.messages.forEach(msg => {
+                addMessageToUI(msg);
+                lastMessageId = Math.max(lastMessageId, msg.id);
+            });
+        }
+    } catch (error) {
+        console.error('Error polling messages:', error);
+    } finally {
+        isPolling = false;
+    }
+}, 3000);
+
+// Add message to UI
+function addMessageToUI(msg) {
+    const container = document.getElementById('messagesContainer');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `flex ${msg.is_mine ? 'justify-end' : 'justify-start'} message-bubble`;
+    messageDiv.dataset.messageId = msg.id;
+    
+    const isMine = msg.is_mine || msg.sender_id === {{ current_user.id }};
+    
+    let messageContent = '';
+    
+    // Dosya mesajı ise özel gösterim
+    if (msg.message_type === 'image') {
+        messageContent = `
+            <a href="${msg.file_url}" target="_blank" class="block">
+                <img src="${msg.file_url}" alt="${msg.file_name}" class="max-w-xs rounded-lg mb-2 hover:opacity-90 transition-opacity">
+            </a>
+            ${msg.message && msg.message !== `📎 ${msg.file_name}` ? `<p class="text-sm">${escapeHtml(msg.message)}</p>` : ''}
+        `;
+    } else if (msg.message_type === 'file') {
+        const fileIcon = msg.file_name.endsWith('.pdf') ? 'picture_as_pdf' : 'description';
+        const fileColor = msg.file_name.endsWith('.pdf') ? 'text-red-500' : 'text-blue-500';
+        messageContent = `
+            <a href="${msg.file_url}" download class="flex items-center gap-3 p-3 rounded-lg bg-opacity-10 hover:bg-opacity-20 transition-colors ${isMine ? 'bg-white' : 'bg-gray-500'}">
+                <span class="material-symbols-outlined ${fileColor} text-xl md:text-3xl">${fileIcon}</span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold truncate">${msg.file_name}</p>
+                    <p class="text-xs opacity-70">${formatFileSize(msg.file_size)}</p>
+                </div>
+                <span class="material-symbols-outlined text-sm">download</span>
+            </a>
+            ${msg.message && msg.message !== `📎 ${msg.file_name}` ? `<p class="text-sm mt-2">${escapeHtml(msg.message)}</p>` : ''}
+        `;
+    } else {
+        // Normal metin mesajı
+        messageContent = `<p class="text-sm break-words whitespace-pre-wrap">${escapeHtml(msg.message)}</p>`;
+    }
+    
+    messageDiv.innerHTML = `
+        <div class="max-w-xs lg:max-w-full mx-4 sm:max-w-md xl:max-w-full mx-4 sm:max-w-lg">
+            <div class="${isMine ? 'bg-primary text-white' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white'} rounded-xl sm:rounded-2xl px-4 py-2 shadow-sm">
+                ${messageContent}
+                <div class="flex items-center justify-end gap-1 mt-1">
+                    <span class="text-xs opacity-70">${msg.created_at}</span>
+                    ${isMine ? (msg.read_at ? 
+                        '<span class="material-symbols-outlined text-xs" style="font-size: 14px;">done_all</span>' : 
+                        '<span class="material-symbols-outlined text-xs opacity-50" style="font-size: 14px;">done</span>') : ''}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.appendChild(messageDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+// Escape HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Search conversations
+document.getElementById('searchConversations')?.addEventListener('input', (e) => {
+    const search = e.target.value.toLowerCase();
+    document.querySelectorAll('.conversation-item').forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(search) ? 'flex' : 'none';
+    });
+});
+
+// File handling
+let selectedFile = null;
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        alert('Dosya boyutu 10MB\'dan küçük olmalıdır');
+        return;
+    }
+    
+    selectedFile = file;
+    
+    // Show preview
+    const previewArea = document.getElementById('filePreviewArea');
+    const fileIcon = document.getElementById('fileIcon');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    
+    // Update icon based on file type
+    let icon = 'attach_file';
+    let bgColor = 'bg-blue-100 dark:bg-blue-900/30';
+    let textColor = 'text-blue-600 dark:text-blue-400';
+    
+    if (file.type.startsWith('image/')) {
+        icon = 'image';
+        bgColor = 'bg-green-100 dark:bg-green-900/30';
+        textColor = 'text-green-600 dark:text-green-400';
+    } else if (file.type === 'application/pdf') {
+        icon = 'picture_as_pdf';
+        bgColor = 'bg-red-100 dark:bg-red-900/30';
+        textColor = 'text-red-600 dark:text-red-400';
+    } else if (file.type.includes('word') || file.type.includes('document')) {
+        icon = 'description';
+        bgColor = 'bg-blue-100 dark:bg-blue-900/30';
+        textColor = 'text-blue-600 dark:text-blue-400';
+    }
+    
+    fileIcon.className = `w-12 h-12 ${bgColor} rounded-lg flex items-center justify-center`;
+    fileIcon.innerHTML = `<span class="material-symbols-outlined ${textColor}">${icon}</span>`;
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+    
+    previewArea.classList.remove('hidden');
+}
+
+function clearFileSelection() {
+    selectedFile = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('filePreviewArea').classList.add('hidden');
+}
+
+function formatFileSize(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// Emoji picker
+function toggleEmojiPicker() {
+    const picker = document.getElementById('emojiPicker');
+    picker.classList.toggle('hidden');
+}
+
+function insertEmoji(emoji) {
+    const input = document.getElementById('messageInput');
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+    const text = input.value;
+    
+    input.value = text.substring(0, start) + emoji + text.substring(end);
+    input.focus();
+    
+    // Set cursor position after emoji
+    const newPos = start + emoji.length;
+    input.setSelectionRange(newPos, newPos);
+    
+    // Close picker
+    document.getElementById('emojiPicker').classList.add('hidden');
+}
+
+// Close emoji picker when clicking outside
+document.addEventListener('click', (e) => {
+    const picker = document.getElementById('emojiPicker');
+    const emojiButton = picker?.previousElementSibling;
+    
+    if (picker && !picker.contains(e.target) && e.target !== emojiButton && !emojiButton?.contains(e.target)) {
+        picker.classList.add('hidden');
+    }
+});
+</script>
+
+<!-- Socket.IO Client -->
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+<script>
+{% if active_conversation %}
+// Initialize Socket.IO
+const socket = io({
+    transports: ['websocket', 'polling']
+});
+
+const conversationId = {{ active_conversation.id }};
+const currentUserId = {{ current_user.id }};
+const otherUserId = {{ active_conversation.get_other_user(current_user.id).id }};
+let typingTimeout;
+
+// Connection events
+socket.on('connect', () => {
+    console.log('✅ WebSocket connected');
+    
+    // Join conversation room
+    socket.emit('join_conversation', {
+        conversation_id: conversationId
+    });
+    
+    // Request online status
+    socket.emit('request_online_status', {
+        user_ids: [otherUserId]
+    });
+});
+
+socket.on('disconnect', () => {
+    console.log('❌ WebSocket disconnected');
+});
+
+// Online status
+socket.on('user_status', (data) => {
+    if (data.user_id === otherUserId) {
+        const statusEl = document.getElementById('userOnlineStatus');
+        if (statusEl) {
+            if (data.status === 'online') {
+                statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full"></span><span class="text-xs text-green-600 dark:text-green-400">Çevrimiçi</span>';
+            } else {
+                statusEl.innerHTML = '<span class="text-xs text-gray-500">Çevr imdışı</span>';
+            }
+        }
+    }
+});
+
+socket.on('online_status_response', (data) => {
+    const isOnline = data[otherUserId];
+    const statusEl = document.getElementById('userOnlineStatus');
+    if (statusEl) {
+        if (isOnline) {
+            statusEl.innerHTML = '<span class="w-2 h-2 bg-green-500 rounded-full"></span><span class="text-xs text-green-600 dark:text-green-400">Çevrimiçi</span>';
+        } else {
+            statusEl.innerHTML = '<span class="text-xs text-gray-500">Çevrimdışı</span>';
+        }
+    }
+});
+
+// New message received
+socket.on('new_message', (data) => {
+    console.log('📨 New message received:', data);
+    
+    // Only add if from other user
+    if (data.sender_id !== currentUserId) {
+        addMessageToUI({
+            id: data.id,
+            sender_id: data.sender_id,
+            message: data.content,
+            created_at: data.timestamp,
+            is_mine: false,
+            read_at: null
+        });
+        
+        lastMessageId = Math.max(lastMessageId, data.id);
+        
+        // Mark as read automatically
+        socket.emit('mark_as_read', {
+            conversation_id: conversationId
+        });
+        
+        // Play notification sound
+        playNotificationSound();
+    }
+});
+
+// Messages read notification
+socket.on('messages_read', (data) => {
+    if (data.user_id !== currentUserId) {
+        // Update read receipts
+        document.querySelectorAll('.message-bubble').forEach(bubble => {
+            const senderId = parseInt(bubble.dataset.senderId || '0');
+            if (senderId === currentUserId) {
+                const checkIcon = bubble.querySelector('.material-symbols-outlined');
+                if (checkIcon && checkIcon.textContent === 'done') {
+                    checkIcon.textContent = 'done_all';
+                    checkIcon.classList.remove('opacity-50');
+                }
+            }
+        });
+    }
+});
+
+// Typing indicator
+socket.on('user_typing', (data) => {
+    const typingEl = document.getElementById('typingIndicator');
+    if (!typingEl) return;
+    
+    if (data.is_typing && data.user_id !== currentUserId) {
+        typingEl.classList.remove('hidden');
+        typingEl.innerHTML = `
+            <div class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <span class="typing-dots flex gap-1">
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                    <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
+                </span>
+                <span>yazıyor...</span>
+            </div>
+        `;
+    } else {
+        typingEl.classList.add('hidden');
+    }
+});
+
+// Send message via WebSocket
+const originalSubmit = document.getElementById('messageForm').onsubmit;
+document.getElementById('messageForm').onsubmit = null;
+
+document.getElementById('messageForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const message = messageInput.value.trim();
+    if (!message) return;
+    
+    // Send via WebSocket
+    socket.emit('send_message', {
+        conversation_id: conversationId,
+        content: message
+    });
+    
+    // Clear input
+    messageInput.value = '';
+    messageInput.style.height = 'auto';
+    
+    // Stop typing indicator
+    socket.emit('typing', {
+        conversation_id: conversationId,
+        is_typing: false
+    });
+});
+
+// Typing indicator on input
+messageInput.addEventListener('input', () => {
+    // Emit typing event
+    socket.emit('typing', {
+        conversation_id: conversationId,
+        is_typing: true
+    });
+    
+    // Clear previous timeout
+    clearTimeout(typingTimeout);
+    
+    // Stop typing after 2 seconds of no input
+    typingTimeout = setTimeout(() => {
+        socket.emit('typing', {
+            conversation_id: conversationId,
+            is_typing: false
+        });
+    }, 2000);
+});
+
+// Play notification sound
+function playNotificationSound() {
+    const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBjSR1/zLfC8F');
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Cannot play notification sound:', e));
+}
+
+// Disable polling when using WebSocket
+if (window.pollingInterval) {
+    clearInterval(window.pollingInterval);
+}
+
+{% endif %}
+</script>
+
+{% endif %}
+
+{% endblock %}

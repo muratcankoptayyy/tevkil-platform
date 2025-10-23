@@ -3,46 +3,46 @@
 {% block content %}
 <!-- Hero Section -->
 <div class="bg-gradient-to-r from-blue-900 to-blue-700 text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 md:px-8 py-20">
         <div class="text-center">
             <h1 class="text-5xl md:text-6xl font-bold mb-6">
                 Avukatlar Arası İş Devri
                 <span class="block text-yellow-400">Artık Çok Kolay</span>
             </h1>
-            <p class="text-xl md:text-2xl mb-8 text-blue-100">
+            <p class="text-xl md:text-lg md:text-2xl mb-8 text-blue-100">
                 Görevlerinizi güvenilir meslektaşlarınıza devredin veya yeni işler alın.
                 <br>Tamamen ücretsiz, hızlı ve güvenli.
             </p>
             <div class="flex justify-center space-x-4">
                 {% if current_user.is_authenticated %}
-                    <a href="{{ url_for('create_post') }}" class="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg text-lg font-bold hover:bg-yellow-300 transition transform hover:scale-105">
+                    <a href="{{ url_for('create_post') }}" class="bg-yellow-400 text-blue-900 px-4 md:px-8 py-4 rounded-lg text-lg font-bold hover:bg-yellow-300 transition transform hover:scale-105">
                         <i class="fas fa-plus mr-2"></i>Hemen İlan Ver
                     </a>
-                    <a href="{{ url_for('list_posts') }}" class="bg-white text-blue-900 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition">
+                    <a href="{{ url_for('list_posts') }}" class="bg-white text-blue-900 px-4 md:px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition">
                         <i class="fas fa-search mr-2"></i>İlanları Gör
                     </a>
                 {% else %}
-                    <a href="{{ url_for('register') }}" class="bg-yellow-400 text-blue-900 px-8 py-4 rounded-lg text-lg font-bold hover:bg-yellow-300 transition transform hover:scale-105">
+                    <a href="{{ url_for('register') }}" class="bg-yellow-400 text-blue-900 px-4 md:px-8 py-4 rounded-lg text-lg font-bold hover:bg-yellow-300 transition transform hover:scale-105">
                         <i class="fas fa-user-plus mr-2"></i>Ücretsiz Kayıt Ol
                     </a>
-                    <a href="{{ url_for('login') }}" class="bg-white text-blue-900 px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition">
+                    <a href="{{ url_for('login') }}" class="bg-white text-blue-900 px-4 md:px-8 py-4 rounded-lg text-lg font-bold hover:bg-gray-100 transition">
                         <i class="fas fa-sign-in-alt mr-2"></i>Giriş Yap
                     </a>
                 {% endif %}
             </div>
             
             <!-- Stats -->
-            <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="mt-16 grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-yellow-400">1,234</div>
+                    <div class="text-2xl md:text-4xl font-bold text-yellow-400">1,234</div>
                     <div class="text-blue-200 mt-2">Kayıtlı Avukat</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-yellow-400">5,678</div>
+                    <div class="text-2xl md:text-4xl font-bold text-yellow-400">5,678</div>
                     <div class="text-blue-200 mt-2">Tamamlanan İş</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-yellow-400">4.8/5</div>
+                    <div class="text-2xl md:text-4xl font-bold text-yellow-400">4.8/5</div>
                     <div class="text-blue-200 mt-2">Ortalama Puan</div>
                 </div>
             </div>
@@ -51,17 +51,17 @@
 </div>
 
 <!-- Features Section -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 md:px-8 py-20">
     <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">Neden Tevkil?</h2>
+        <h2 class="text-2xl md:text-4xl font-bold text-gray-900 mb-4">Neden Tevkil?</h2>
         <p class="text-xl text-gray-600">Avukatlar için tasarlanmış, kolay ve güvenilir platform</p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
         <!-- Feature 1 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-bolt text-3xl text-blue-900"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-bolt text-xl md:text-3xl text-blue-900"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">Hızlı Eşleşme</h3>
             <p class="text-gray-600">
@@ -71,9 +71,9 @@
         </div>
         
         <!-- Feature 2 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-shield-alt text-3xl text-green-600"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-shield-alt text-xl md:text-3xl text-green-600"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">Güvenilir ve Şeffaf</h3>
             <p class="text-gray-600">
@@ -83,9 +83,9 @@
         </div>
         
         <!-- Feature 3 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-gift text-3xl text-yellow-600"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-gift text-xl md:text-3xl text-yellow-600"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">Tamamen Ücretsiz</h3>
             <p class="text-gray-600">
@@ -95,9 +95,9 @@
         </div>
         
         <!-- Feature 4 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fab fa-whatsapp text-3xl text-green-600"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fab fa-whatsapp text-xl md:text-3xl text-green-600"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">WhatsApp Entegrasyonu</h3>
             <p class="text-gray-600">
@@ -107,9 +107,9 @@
         </div>
         
         <!-- Feature 5 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-map-marker-alt text-3xl text-red-600"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-map-marker-alt text-xl md:text-3xl text-red-600"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">Konum Bazlı</h3>
             <p class="text-gray-600">
@@ -119,9 +119,9 @@
         </div>
         
         <!-- Feature 6 -->
-        <div class="bg-white p-8 rounded-xl shadow-lg card-hover text-center">
-            <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i class="fas fa-star text-3xl text-indigo-600"></i>
+        <div class="bg-white p-4 md:p-8 rounded-xl shadow-lg card-hover text-center">
+            <div class="w-16 h-14 md:h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-star text-xl md:text-3xl text-indigo-600"></i>
             </div>
             <h3 class="text-xl font-bold mb-3">İtibar Sistemi</h3>
             <p class="text-gray-600">
@@ -135,13 +135,13 @@
 <!-- Recent Posts -->
 {% if posts %}
 <div class="bg-gray-100 py-20">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Son İlanlar</h2>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 md:px-8">
+        <div class="text-center mb-6 sm:mb-12">
+            <h2 class="text-2xl md:text-4xl font-bold text-gray-900 mb-4">Son İlanlar</h2>
             <p class="text-xl text-gray-600">Hemen başvurun, fırsatları kaçırmayın</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {% for post in posts %}
             <div class="bg-white rounded-xl shadow-md card-hover overflow-hidden">
                 <!-- Urgency Badge -->
@@ -155,7 +155,7 @@
                 </div>
                 {% endif %}
                 
-                <div class="p-6">
+                <div class="p-3 md:p-6">
                     <!-- Category -->
                     <div class="text-sm text-blue-600 font-semibold mb-2">
                         <i class="fas fa-folder mr-1"></i>{{ post.category or 'Genel' }}
@@ -190,8 +190,8 @@
             {% endfor %}
         </div>
         
-        <div class="text-center mt-12">
-            <a href="{{ url_for('list_posts') }}" class="inline-block bg-blue-900 text-white px-8 py-3 rounded-lg hover:bg-blue-800 transition font-semibold">
+        <div class="text-center mt-6 sm:mt-12">
+            <a href="{{ url_for('list_posts') }}" class="inline-block bg-blue-900 text-white px-4 md:px-8 py-3 rounded-lg hover:bg-blue-800 transition font-semibold">
                 Tüm İlanları Görüntüle <i class="fas fa-arrow-right ml-2"></i>
             </a>
         </div>
@@ -200,19 +200,19 @@
 {% endif %}
 
 <!-- How It Works -->
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 md:px-8 py-20">
     <div class="text-center mb-16">
-        <h2 class="text-4xl font-bold text-gray-900 mb-4">Nasıl Çalışır?</h2>
+        <h2 class="text-2xl md:text-4xl font-bold text-gray-900 mb-4">Nasıl Çalışır?</h2>
         <p class="text-xl text-gray-600">3 basit adımda işinize başlayın</p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+    <div class="grid grid-cols-1 md:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
         <!-- Step 1 -->
         <div class="text-center">
-            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl md:text-3xl font-bold">
                 1
             </div>
-            <h3 class="text-2xl font-bold mb-3">Kayıt Olun</h3>
+            <h3 class="text-lg md:text-2xl font-bold mb-3">Kayıt Olun</h3>
             <p class="text-gray-600">
                 Ücretsiz hesap oluşturun, profilinizi tamamlayın. 
                 Uzmanlık alanlarınızı belirtin.
@@ -221,10 +221,10 @@
         
         <!-- Step 2 -->
         <div class="text-center">
-            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl md:text-3xl font-bold">
                 2
             </div>
-            <h3 class="text-2xl font-bold mb-3">İlan Verin veya Başvurun</h3>
+            <h3 class="text-lg md:text-2xl font-bold mb-3">İlan Verin veya Başvurun</h3>
             <p class="text-gray-600">
                 Devretmek istediğiniz işleri ilan olarak paylaşın veya 
                 ilanlara başvurun.
@@ -233,10 +233,10 @@
         
         <!-- Step 3 -->
         <div class="text-center">
-            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-3xl font-bold">
+            <div class="w-20 h-20 bg-blue-900 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl md:text-3xl font-bold">
                 3
             </div>
-            <h3 class="text-2xl font-bold mb-3">Çalışmaya Başlayın</h3>
+            <h3 class="text-lg md:text-2xl font-bold mb-3">Çalışmaya Başlayın</h3>
             <p class="text-gray-600">
                 Uygun avukatı seçin, anlaşın ve işbirliğine başlayın. 
                 İş bitince değerlendirin.
