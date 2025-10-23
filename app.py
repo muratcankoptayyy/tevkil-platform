@@ -13,6 +13,7 @@ from sqlalchemy import or_, and_
 import secrets
 from constants import CITIES, COURTHOUSES
 from sms_service import NetgsmSMSService
+from functools import wraps
 
 # Load environment variables
 load_dotenv()
@@ -22,6 +23,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///tevkil.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['DEV_MODE'] = os.getenv('FLASK_ENV', 'production') == 'development'
 
 # Initialize extensions
 db.init_app(app)
@@ -32,6 +34,24 @@ login_manager.login_view = 'login'
 
 # Initialize SMS service
 sms_service = NetgsmSMSService()
+
+# Development Mode: Login bypass decorator
+def dev_login_optional(f):
+    """Geliştirme modunda login zorunluluğunu kaldırır"""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if app.config['DEV_MODE']:
+            # Geliştirme modunda: Eğer kullanıcı login değilse, ilk kullanıcıyı otomatik login yap
+            if not current_user.is_authenticated:
+                first_user = User.query.first()
+                if first_user:
+                    login_user(first_user, remember=True)
+                    print(f"🔓 DEV MODE: Auto-logged in as {first_user.email}")
+            return f(*args, **kwargs)
+        else:
+            # Production modunda: Normal login_required davranışı
+            return login_required(f)(*args, **kwargs)
+    return decorated_function
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -93,16 +113,27 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         
+        print(f"🔐 Login attempt: {email}")  # DEBUG
+        
         user = User.query.filter_by(email=email).first()
         
-        if user and user.check_password(password):
-            login_user(user, remember=True)
-            user.last_active = datetime.now(timezone.utc)
-            db.session.commit()
-            
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('dashboard'))
+        if user:
+            print(f"👤 User found: {user.email}, Active: {user.is_active}")  # DEBUG
+            if user.check_password(password):
+                print(f"✅ Password correct, logging in...")  # DEBUG
+                login_user(user, remember=True)
+                user.last_active = datetime.now(timezone.utc)
+                db.session.commit()
+                
+                next_page = request.args.get('next')
+                redirect_url = next_page or url_for('dashboard')
+                print(f"↗️ Redirecting to: {redirect_url}")  # DEBUG
+                return redirect(redirect_url)
+            else:
+                print(f"❌ Password incorrect")  # DEBUG
+                flash('Hatalı e-posta veya şifre', 'error')
         else:
+            print(f"❌ User not found: {email}")  # DEBUG
             flash('Hatalı e-posta veya şifre', 'error')
     
     return render_template('login.html')
@@ -195,7 +226,7 @@ def index():
     return render_template('index.html', posts=recent_posts)
 
 @app.route('/dashboard')
-@login_required
+@dev_login_optional
 def dashboard():
     """Kullanıcı dashboard"""
     # Kullanıcının ilanları
@@ -295,27 +326,61 @@ def dashboard():
                          total_earnings=total_earnings,
                          avg_rating=avg_rating)
 
+@app.route('/applications/received')
+@dev_login_optional
+def applications_received():
+    """Gelen başvurular - kullanıcının ilanlarına yapılan başvurular"""
+    # Kullanıcının ilanlarına gelen başvurular
+    incoming_applications = db.session.query(Application).join(TevkilPost).filter(
+        TevkilPost.user_id == current_user.id
+    ).order_by(Application.created_at.desc()).all()
+    
+    return render_template('applications_received.html', applications=incoming_applications)
+
+@app.route('/applications/sent')
+@dev_login_optional
+def applications_sent():
+    """Gönderilen başvurular - kullanıcının yaptığı başvurular"""
+    # Kullanıcının yaptığı başvurular
+    my_applications = Application.query.filter_by(applicant_id=current_user.id).order_by(Application.created_at.desc()).all()
+    
+    return render_template('applications_sent.html', applications=my_applications)
+
 # ============================================
 # TEVKIL POST ROUTES
 # ============================================
 
 @app.route('/posts')
+@dev_login_optional
 def list_posts():
     """İlan listesi"""
     from constants import CITIES
     
     # Filters
+    filter_type = request.args.get('filter')  # my_active, my_completed, all
     category = request.args.get('category')
     city = request.args.get('city')
     urgency = request.args.get('urgency')
     search = request.args.get('search')
     
-    query = TevkilPost.query.filter_by(status='active')
+    # Base query
+    if filter_type == 'my_active':
+        # Kullanıcının aktif ilanları
+        query = TevkilPost.query.filter_by(user_id=current_user.id, status='active')
+    elif filter_type == 'my_completed':
+        # Kullanıcının tamamlanan ilanları
+        query = TevkilPost.query.filter_by(user_id=current_user.id, status='completed')
+    elif filter_type == 'my_all':
+        # Kullanıcının tüm ilanları
+        query = TevkilPost.query.filter_by(user_id=current_user.id)
+    else:
+        # Tüm aktif ilanlar (genel liste)
+        query = TevkilPost.query.filter_by(status='active')
     
     if category:
         query = query.filter_by(category=category)
     if city:
-        query = query.filter_by(city=city)  # Changed from location to city
+        query = query.filter_by(city=city)
     if urgency:
         query = query.filter_by(urgency_level=urgency)
     if search:
@@ -332,7 +397,7 @@ def list_posts():
         favorites = Favorite.query.filter_by(user_id=current_user.id).all()
         current_user_favorites = [fav.post_id for fav in favorites]
     
-    return render_template('posts_list.html', posts=posts, current_user_favorites=current_user_favorites, cities=CITIES)
+    return render_template('posts_list.html', posts=posts, current_user_favorites=current_user_favorites, cities=CITIES, filter_type=filter_type)
 
 @app.route('/posts/new', methods=['GET', 'POST'])
 @login_required
