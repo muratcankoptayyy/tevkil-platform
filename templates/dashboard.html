@@ -6,79 +6,79 @@
 <div class="px-4 sm:px-10 md:px-20 lg:px-40 flex flex-1 justify-center py-5">
     <div class="layout-content-container flex flex-col max-w-7xl flex-1">
         <!-- Welcome Header -->
-        <div class="flex flex-wrap justify-between items-center gap-4 p-4">
+        <div class="flex flex-col sm:flex-row sm:flex-wrap justify-between items-start sm:items-center gap-3 sm:gap-4 p-4">
             <div>
-                <p class="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">
+                <p class="text-gray-900 dark:text-white text-2xl sm:text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
                     Hoş Geldiniz, {{ current_user.full_name.split()[0] }}!
                 </p>
-                <p class="text-gray-600 dark:text-gray-400 text-base mt-2">
+                <p class="text-gray-600 dark:text-gray-400 text-sm sm:text-base mt-1 sm:mt-2">
                     İşte hesabınızın genel durumu
                 </p>
             </div>
-            <a href="{{ url_for('create_post') }}" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-5 bg-primary text-white text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors">
-                <span class="material-symbols-outlined mr-2">add</span>
+            <a href="{{ url_for('create_post') }}" class="flex w-full sm:w-auto min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 sm:h-12 px-4 sm:px-5 bg-primary text-white text-sm sm:text-base font-bold leading-normal tracking-wide hover:bg-primary/90 transition-colors">
+                <span class="material-symbols-outlined mr-2 text-lg sm:text-xl">add</span>
                 Yeni İlan
             </a>
         </div>
         
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 px-4 py-3">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 px-4 py-3">
             <!-- Aktif İlanlarım -->
-            <a href="{{ url_for('list_posts', filter='my_active') }}" class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary transition-all duration-200 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Aktif İlanlarım</p>
-                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+            <a href="{{ url_for('list_posts', filter='my_active') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary transition-all duration-200 cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Aktif İlanlarım</p>
+                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
                             {{ my_posts|selectattr('status', 'equalto', 'active')|list|length }}
                         </p>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary text-2xl">list_alt</span>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-xl sm:text-2xl">list_alt</span>
                     </div>
                 </div>
             </a>
             
             <!-- Gelen Başvurular -->
-            <a href="{{ url_for('applications_received') }}" class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-500 transition-all duration-200 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Gelen Başvurular</p>
-                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+            <a href="{{ url_for('applications_received') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-green-500 transition-all duration-200 cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Gelen Başvurular</p>
+                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
                             {{ incoming_applications|length }}
                         </p>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-2xl">inbox</span>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-green-600 dark:text-green-400 text-xl sm:text-2xl">inbox</span>
                     </div>
                 </div>
             </a>
             
             <!-- Başvurularım -->
-            <a href="{{ url_for('applications_sent') }}" class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-purple-500 transition-all duration-200 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Başvurularım</p>
-                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+            <a href="{{ url_for('applications_sent') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-purple-500 transition-all duration-200 cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Başvurularım</p>
+                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
                             {{ my_applications|length }}
                         </p>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-2xl">send</span>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 text-xl sm:text-2xl">send</span>
                     </div>
                 </div>
             </a>
             
             <!-- Tamamlanan -->
-            <a href="{{ url_for('list_posts', filter='my_completed') }}" class="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-yellow-500 transition-all duration-200 cursor-pointer">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Tamamlanan</p>
-                        <p class="text-3xl font-black text-gray-900 dark:text-white mt-2">
+            <a href="{{ url_for('list_posts', filter='my_completed') }}" class="bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-yellow-500 transition-all duration-200 cursor-pointer">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div class="flex-1">
+                        <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm font-medium">Tamamlanan</p>
+                        <p class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white mt-1 sm:mt-2">
                             {{ my_posts|selectattr('status', 'equalto', 'completed')|list|length }}
                         </p>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-2xl">check_circle</span>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-yellow-600 dark:text-yellow-400 text-xl sm:text-2xl">check_circle</span>
                     </div>
                 </div>
             </a>

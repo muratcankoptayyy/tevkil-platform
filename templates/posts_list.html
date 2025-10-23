@@ -36,14 +36,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mx-auto py-8 px-4">
+<div class="container mx-auto py-4 lg:py-8 px-4">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <div class="mb-6 flex justify-between items-center">
-            <h1 class="text-3xl font-bold text-text dark:text-white">İlanlar</h1>
-            <a href="{{ url_for('create_post') }}" class="bg-primary hover:bg-primary-dark text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2">
-                <span class="material-symbols-outlined">add</span>
-                Yeni İlan
+        <div class="mb-4 lg:mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h1 class="text-2xl lg:text-3xl font-bold text-text dark:text-white">İlanlar</h1>
+            <a href="{{ url_for('create_post') }}" class="bg-primary hover:bg-primary-dark text-white px-4 lg:px-6 py-2 rounded-lg transition-colors flex items-center gap-2 text-sm lg:text-base w-full sm:w-auto justify-center">
+                <span class="material-symbols-outlined text-lg">add</span>
+                <span>Yeni İlan</span>
             </a>
         </div>
 
@@ -124,17 +124,17 @@
         {% if posts %}
         <div class="space-y-4" id="postsContainer">
             {% for post in posts %}
-            <div class="bg-background-light dark:bg-slate-800 rounded-xl p-6 border border-border dark:border-slate-700 hover:shadow-lg hover:border-primary transition-all duration-200 post-card"
+            <div class="bg-background-light dark:bg-slate-800 rounded-xl p-4 lg:p-6 border border-border dark:border-slate-700 hover:shadow-lg hover:border-primary transition-all duration-200 post-card"
                  data-title="{{ post.title|lower }}"
                  data-description="{{ post.description|lower }}"
                  data-city="{{ post.city|lower if post.city else '' }}"
                  data-category="{{ post.category }}"
                  data-urgency="{{ post.urgency_level }}">
                 
-                <div class="flex items-start gap-4">
+                <div class="flex items-start gap-3 lg:gap-4">
                     <!-- Post Owner Avatar -->
-                    <div class="flex-shrink-0">
-                        <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                    <div class="flex-shrink-0 hidden sm:block">
+                        <div class="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-base lg:text-lg">
                             {{ post.user.full_name[0] if post.user and post.user.full_name else 'A' }}
                         </div>
                     </div>
@@ -142,18 +142,18 @@
                     <!-- Post Content -->
                     <div class="flex-1 min-w-0">
                         <!-- Post Owner Info -->
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="font-semibold text-text dark:text-white">
+                        <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="font-semibold text-sm lg:text-base text-text dark:text-white">
                                 {{ post.user.full_name if post.user else 'Bilinmeyen' }}
                             </span>
-                            <span class="text-text-light dark:text-slate-400">·</span>
-                            <span class="text-sm text-text-light dark:text-slate-400">
+                            <span class="text-text-light dark:text-slate-400 hidden sm:inline">·</span>
+                            <span class="text-xs lg:text-sm text-text-light dark:text-slate-400 truncate">
                                 {{ post.user.bar_association if post.user and post.user.bar_association else 'Baro belirtilmemiş' }}
                             </span>
                         </div>
                         
                         <!-- Post Title -->
-                        <h3 class="text-xl font-bold text-text dark:text-white mb-2">
+                        <h3 class="text-lg lg:text-xl font-bold text-text dark:text-white mb-2">
                             <a href="{{ url_for('post_detail', post_id=post.id) }}" class="hover:text-primary transition-colors">
                                 {{ post.title }}
                             </a>
@@ -161,7 +161,7 @@
                         
                         <!-- Category & Urgency Badges -->
                         <div class="flex flex-wrap items-center gap-2 mb-3">
-                            <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-sm rounded-full font-medium">
+                            <span class="px-2 lg:px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs lg:text-sm rounded-full font-medium">
                                 {% if post.category == 'hukuk_durusma' %}Hukuk Duruşması
                                 {% elif post.category == 'hukuk_durusma_tanikli' %}Hukuk Duruşması (Tanıklı)
                                 {% elif post.category == 'ceza_durusma' %}Ceza Duruşması
@@ -184,13 +184,14 @@
                             </span>
                             
                             {% if post.urgency_level == 'very_urgent' %}
-                            <span class="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-sm rounded-full font-medium flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">error</span>
-                                Çok Acil
+                            <span class="px-2 lg:px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 text-xs lg:text-sm rounded-full font-medium flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm lg:text-base">error</span>
+                                <span class="hidden sm:inline">Çok Acil</span>
+                                <span class="sm:hidden">Acil!</span>
                             </span>
                             {% elif post.urgency_level == 'urgent' %}
-                            <span class="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 text-sm rounded-full font-medium flex items-center gap-1">
-                                <span class="material-symbols-outlined text-base">schedule</span>
+                            <span class="px-2 lg:px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 text-xs lg:text-sm rounded-full font-medium flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm lg:text-base">schedule</span>
                                 Acil
                             </span>
                             {% endif %}
@@ -198,89 +199,90 @@
                         
                         <!-- Description Preview -->
                         {% if post.description %}
-                        <p class="text-text dark:text-white mb-4" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                            {{ post.description[:200] }}{% if post.description|length > 200 %}...{% endif %}
+                        <p class="text-sm lg:text-base text-text dark:text-white mb-3 lg:mb-4" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                            {{ post.description[:150] }}{% if post.description|length > 150 %}...{% endif %}
                         </p>
                         {% endif %}
                         
                         <!-- Post Details Grid -->
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4">
                             <!-- Location -->
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-xl">location_on</span>
-                                <div class="min-w-0">
-                                    <div class="text-xs text-text-light dark:text-slate-400">Yer</div>
-                                    <div class="text-sm font-medium text-text dark:text-white truncate">
+                            <div class="flex items-start gap-1.5 lg:gap-2">
+                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-lg lg:text-xl mt-0.5">location_on</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400">Yer</div>
+                                    <div class="text-xs lg:text-sm font-medium text-text dark:text-white truncate">
                                         {{ post.city or 'Belirtilmemiş' }}
                                     </div>
                                     {% if post.courthouse %}
-                                    <div class="text-xs text-text-light dark:text-slate-400 truncate">{{ post.courthouse }}</div>
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400 truncate hidden lg:block">{{ post.courthouse }}</div>
                                     {% endif %}
                                 </div>
                             </div>
                             
                             <!-- Date & Time -->
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-xl">calendar_today</span>
-                                <div class="min-w-0">
-                                    <div class="text-xs text-text-light dark:text-slate-400">Tarih & Saat</div>
+                            <div class="flex items-start gap-1.5 lg:gap-2">
+                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-lg lg:text-xl mt-0.5">calendar_today</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400">Tarih</div>
                                     {% if post.court_date %}
-                                    <div class="text-sm font-medium text-text dark:text-white">
+                                    <div class="text-xs lg:text-sm font-medium text-text dark:text-white">
                                         {{ post.court_date.strftime('%d.%m.%Y') }}
                                     </div>
-                                    <div class="text-xs text-text-light dark:text-slate-400">
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400">
                                         {{ post.court_date.strftime('%H:%M') }}
                                     </div>
                                     {% else %}
-                                    <div class="text-sm text-text-light dark:text-slate-400">Belirtilmemiş</div>
+                                    <div class="text-xs lg:text-sm text-text-light dark:text-slate-400">-</div>
                                     {% endif %}
                                 </div>
                             </div>
                             
                             <!-- Price -->
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-xl">payments</span>
-                                <div class="min-w-0">
-                                    <div class="text-xs text-text-light dark:text-slate-400">Ücret</div>
+                            <div class="flex items-start gap-1.5 lg:gap-2">
+                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-lg lg:text-xl mt-0.5">payments</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400">Ücret</div>
                                     {% if post.price_min and post.price_max %}
-                                    <div class="text-sm font-medium text-text dark:text-white">
+                                    <div class="text-xs lg:text-sm font-medium text-text dark:text-white">
                                         {{ post.price_min|int }}-{{ post.price_max|int }} TL
                                     </div>
                                     {% elif post.price_min %}
-                                    <div class="text-sm font-medium text-text dark:text-white">
+                                    <div class="text-xs lg:text-sm font-medium text-text dark:text-white">
                                         {{ post.price_min|int }} TL
                                     </div>
                                     {% else %}
-                                    <div class="text-sm text-text-light dark:text-slate-400">Belirtilmemiş</div>
+                                    <div class="text-xs lg:text-sm text-text-light dark:text-slate-400">-</div>
                                     {% endif %}
                                 </div>
                             </div>
                             
                             <!-- Application Count -->
-                            <div class="flex items-center gap-2">
-                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-xl">group</span>
-                                <div class="min-w-0">
-                                    <div class="text-xs text-text-light dark:text-slate-400">Başvuru</div>
-                                    <div class="text-sm font-medium text-text dark:text-white">
-                                        {{ post.applications.count() }} kişi
+                            <div class="flex items-start gap-1.5 lg:gap-2">
+                                <span class="material-symbols-outlined text-text-light dark:text-slate-400 text-lg lg:text-xl mt-0.5">group</span>
+                                <div class="min-w-0 flex-1">
+                                    <div class="text-[10px] lg:text-xs text-text-light dark:text-slate-400">Başvuru</div>
+                                    <div class="text-xs lg:text-sm font-medium text-text dark:text-white">
+                                        {{ post.applications.count() }}
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Action Buttons -->
-                        <div class="flex items-center gap-3 pt-4 border-t border-border dark:border-slate-700">
+                        <div class="flex items-center gap-2 lg:gap-3 pt-3 lg:pt-4 border-t border-border dark:border-slate-700">
                             <a href="{{ url_for('post_detail', post_id=post.id) }}" 
-                               class="flex-1 bg-primary text-white px-4 py-2.5 rounded-lg font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-lg">visibility</span>
-                                Detayları Gör
+                               class="flex-1 bg-primary text-white px-3 lg:px-4 py-2 lg:py-2.5 rounded-lg text-sm lg:text-base font-semibold hover:bg-primary-dark transition-colors flex items-center justify-center gap-1.5 lg:gap-2">
+                                <span class="material-symbols-outlined text-base lg:text-lg">visibility</span>
+                                <span class="hidden sm:inline">Detayları Gör</span>
+                                <span class="sm:hidden">Detay</span>
                             </a>
                             
                             {% if current_user.is_authenticated %}
                             <button onclick="toggleFavorite({{ post.id }}, this)" 
-                                    class="favorite-btn p-2.5 rounded-lg border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-700 transition-colors" 
+                                    class="favorite-btn p-2 lg:p-2.5 rounded-lg border border-border dark:border-slate-700 hover:bg-background dark:hover:bg-slate-700 transition-colors" 
                                     data-favorited="{{ 'true' if post.id in current_user_favorites else 'false' }}">
-                                <span class="material-symbols-outlined text-xl {% if post.id in current_user_favorites %}text-red-500 fill-icon{% else %}text-text-light{% endif %}">favorite</span>
+                                <span class="material-symbols-outlined text-lg lg:text-xl {% if post.id in current_user_favorites %}text-red-500 fill-icon{% else %}text-text-light{% endif %}">favorite</span>
                             </button>
                             {% endif %}
                         </div>

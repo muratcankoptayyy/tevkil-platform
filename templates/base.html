@@ -65,7 +65,16 @@
         {% block header %}
         <!-- Sidebar Navigation - Sadece giriş yapılmışsa göster -->
         {% if current_user.is_authenticated %}
-        <aside class="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col z-50">
+        <!-- Mobile Menu Button -->
+        <button id="mobileMenuBtn" class="lg:hidden fixed top-4 left-4 z-50 bg-white dark:bg-gray-900 p-2 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+            <span class="material-symbols-outlined text-gray-900 dark:text-white">menu</span>
+        </button>
+        
+        <!-- Overlay -->
+        <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden"></div>
+        
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <!-- Logo -->
             <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-200 dark:border-gray-700">
                 <img src="{{ url_for('static', filename='logo-icon.svg') }}" alt="Ulusal Tevkil Ağı Projesi" class="h-16 w-16">
@@ -169,7 +178,7 @@
         {% endblock %}
         
         <!-- Main Content Area -->
-        <div class="flex-1 {% block main_classes %}{% if current_user.is_authenticated %}ml-64{% endif %}{% endblock %}">
+        <div class="flex-1 {% block main_classes %}{% if current_user.is_authenticated %}lg:ml-64{% endif %}{% endblock %}">
             
             <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -259,6 +268,31 @@
                 setTimeout(() => alert.remove(), 500);
             });
         }, 5000);
+        
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        if (mobileMenuBtn && sidebar && sidebarOverlay) {
+            const toggleMenu = () => {
+                sidebar.classList.toggle('-translate-x-full');
+                sidebarOverlay.classList.toggle('hidden');
+            };
+            
+            mobileMenuBtn.addEventListener('click', toggleMenu);
+            sidebarOverlay.addEventListener('click', toggleMenu);
+            
+            // Close menu when clicking a link
+            const sidebarLinks = sidebar.querySelectorAll('a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (window.innerWidth < 1024) {
+                        toggleMenu();
+                    }
+                });
+            });
+        }
     </script>
     
     {% block extra_js %}{% endblock %}
