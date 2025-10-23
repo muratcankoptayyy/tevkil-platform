@@ -353,13 +353,17 @@ document.getElementById('messageForm').addEventListener('submit', async (e) => {
     }
 });
 
-// Poll for new messages every 3 seconds
+// Poll for new messages every 5 seconds (reduced frequency for better performance)
 setInterval(async () => {
     if (isPolling) return;
     isPolling = true;
     
     try {
-        const response = await fetch(`/chat/messages/${conversationId}/new?since_id=${lastMessageId}`);
+        const response = await fetch(`/chat/messages/${conversationId}/new?since_id=${lastMessageId}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
         const data = await response.json();
         
         if (data.success && data.messages.length > 0) {
@@ -373,7 +377,7 @@ setInterval(async () => {
     } finally {
         isPolling = false;
     }
-}, 3000);
+}, 5000); // Increased from 3s to 5s for better performance
 
 // Add message to UI
 function addMessageToUI(msg) {

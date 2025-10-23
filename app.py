@@ -1821,17 +1821,21 @@ def send_chat_message():
         
         db.session.commit()
         
-        # Bildirim gönder
-        create_notification(
-            user_id=other_user.id,
-            notification_type='new_message',
-            title='💬 Yeni Mesaj',
-            message=f'{current_user.full_name}: {message_text[:50]}...',
-            related_user_id=current_user.id,
-            action_url=url_for('chat_conversation', conversation_id=conversation_id),
-            action_text='Mesajı Görüntüle',
-            priority='normal'
-        )
+        # Bildirim gönder (asenkron - UI'ı bloklamaz)
+        try:
+            create_notification(
+                user_id=other_user.id,
+                notification_type='new_message',
+                title='💬 Yeni Mesaj',
+                message=f'{current_user.full_name}: {message_text[:50]}...',
+                related_user_id=current_user.id,
+                action_url=url_for('chat_conversation', conversation_id=conversation_id),
+                action_text='Mesajı Görüntüle',
+                priority='normal'
+            )
+        except Exception as e:
+            # Bildirim hatası mesaj göndermeyi engellemez
+            print(f"Notification error: {e}")
         
         return jsonify({
             'success': True,
