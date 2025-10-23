@@ -1774,6 +1774,7 @@ def start_chat(user_id):
 
 @app.route('/chat/send', methods=['POST'])
 @login_required
+@limiter.limit("100 per minute")  # Chat için yüksek limit
 def send_chat_message():
     """Chat mesajı gönder (AJAX)"""
     try:
@@ -1845,6 +1846,7 @@ def send_chat_message():
 
 @app.route('/chat/messages/<int:conversation_id>/new', methods=['GET'])
 @login_required
+@limiter.limit("200 per minute")  # Polling için çok yüksek limit
 def get_new_messages(conversation_id):
     """Yeni mesajları al (polling için)"""
     conversation = Conversation.query.get_or_404(conversation_id)

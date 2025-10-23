@@ -290,6 +290,7 @@ document.getElementById('messageForm').addEventListener('submit', async (e) => {
             formData.append('file', selectedFile);
             formData.append('conversation_id', conversationId);
             formData.append('message', message);
+            formData.append('csrf_token', '{{ csrf_token() }}');
             
             response = await fetch('/chat/upload', {
                 method: 'POST',
@@ -315,6 +316,7 @@ document.getElementById('messageForm').addEventListener('submit', async (e) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
                 },
                 body: JSON.stringify({
                     conversation_id: conversationId,
@@ -549,7 +551,7 @@ const socket = io({
     transports: ['websocket', 'polling']
 });
 
-const conversationId = {{ active_conversation.id }};
+// conversationId already defined above - don't redeclare
 const currentUserId = {{ current_user.id }};
 const otherUserId = {{ active_conversation.get_other_user(current_user.id).id }};
 let typingTimeout;
