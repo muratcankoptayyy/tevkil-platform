@@ -10,18 +10,29 @@ cache = Cache()
 def init_cache(app):
     """Initialize cache with app"""
     
-    # Redis cache config
-    cache_config = {
-        'CACHE_TYPE': 'redis',
-        'CACHE_REDIS_URL': app.config.get('REDIS_URL', 'redis://localhost:6379/0'),
-        'CACHE_DEFAULT_TIMEOUT': 300,  # 5 minutes
-        'CACHE_KEY_PREFIX': 'tevkil_'
-    }
+    # Redis cache config (fallback to SimpleCache if Redis unavailable)
+    redis_url = app.config.get('REDIS_URL')
+    
+    if redis_url:
+        # Production: Redis cache
+        cache_config = {
+            'CACHE_TYPE': 'redis',
+            'CACHE_REDIS_URL': redis_url,
+            'CACHE_DEFAULT_TIMEOUT': 300,  # 5 minutes
+            'CACHE_KEY_PREFIX': 'tevkil_'
+        }
+        print("✅ Redis cache initialized")
+    else:
+        # Development: Simple memory cache (single process only)
+        cache_config = {
+            'CACHE_TYPE': 'SimpleCache',
+            'CACHE_DEFAULT_TIMEOUT': 300
+        }
+        print("⚠️  SimpleCache initialized (development mode - Redis not available)")
     
     cache.init_app(app, config=cache_config)
     app.cache = cache
     
-    print("✅ Redis cache initialized")
     return cache
 
 # Cache decorators for common queries
